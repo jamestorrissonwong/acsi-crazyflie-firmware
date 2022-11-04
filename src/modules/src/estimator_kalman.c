@@ -585,6 +585,39 @@ LOG_GROUP_START(outlierf)
   LOG_ADD(LOG_INT32, lhWin, &sweepOutlierFilterState.openingWindow)
 LOG_GROUP_STOP(outlierf)
 
+
+/* I think because of the way things are enqueued/dequeued there will be sets of repeated logs and 
+   every other log will give gyro/acceleration if log rate is same as sample rate */
+LOG_GROUP_START(raw_measurements)
+
+// I'm not sure what the size of the enum ints are -- if this number is garbage, try a different integer size 
+LOG_ADD(LOG_INT32, measurement_type, &m.type)
+
+/*
+0    MeasurementTypeTDOA,
+1    MeasurementTypePosition,
+2    MeasurementTypePose,
+3    MeasurementTypeDistance,
+4    MeasurementTypeTOF,
+5    MeasurementTypeAbsoluteHeight,
+6    MeasurementTypeFlow,
+7    MeasurementTypeYawError,
+8    MeasurementTypeSweepAngle,
+9*   MeasurementTypeGyroscope,
+10*  MeasurementTypeAcceleration,
+11*  MeasurementTypeBarometer,
+*/
+
+LOG_ADD(LOG_FLOAT, gyro_x, &m.data.gyroscope.gyro.x)
+LOG_ADD(LOG_FLOAT, gyro_y, &m.data.gyroscope.gyro.y)
+LOG_ADD(LOG_FLOAT, gyro_z, &m.data.gyroscope.gyro.z)
+
+LOG_ADD(LOG_FLOAT, gyro_x, &m.data.acceleration.acc.x)
+LOG_ADD(LOG_FLOAT, gyro_y, &m.data.acceleration.acc.y)
+LOG_ADD(LOG_FLOAT, gyro_z, &m.data.acceleration.acc.z)
+
+LOG_GROUP_STOP(raw_measurements)
+
 /**
  * Tuning parameters for the Extended Kalman Filter (EKF)
  *     estimator
