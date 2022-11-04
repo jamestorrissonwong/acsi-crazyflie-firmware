@@ -57,6 +57,8 @@
 #include "static_mem.h"
 #include "rateSupervisor.h"
 
+#include "custom_pid_contoller.h"
+
 static bool isInit;
 static bool emergencyStop = false;
 static int emergencyStopTimeout = EMERGENCY_STOP_TIMEOUT_DISABLED;
@@ -255,24 +257,32 @@ static void stabilizerTask(void* param)
         estimatorType = getStateEstimator();
       }
       // allow to update controller dynamically
-      if (getControllerType() != controllerType) {
-        controllerInit(controllerType);
-        controllerType = getControllerType();
-      }
+      // if (getControllerType() != controllerType) {
+      //   controllerInit(controllerType);
+      //   controllerType = getControllerType();
+      // }
 
       stateEstimator(&state, tick);
       compressState();
 
-      if (crtpCommanderHighLevelGetSetpoint(&tempSetpoint, &state, tick)) {
-        commanderSetSetpoint(&tempSetpoint, COMMANDER_PRIORITY_HIGHLEVEL);
-      }
+    // TODO
+    // Get setpoint from trajectory planner -- return as setpointCompressed
+    // getSetpointFromTrajectory(&setpointCompressed)
 
-      commanderGetSetpoint(&setpoint, &state);
-      compressSetpoint();
+      // if (crtpCommanderHighLevelGetSetpoint(&tempSetpoint, &state, tick)) {
+      //   commanderSetSetpoint(&tempSetpoint, COMMANDER_PRIORITY_HIGHLEVEL);
+      // }
+
+      // commanderGetSetpoint(&setpoint, &state);
+      // compressSetpoint();
 
       collisionAvoidanceUpdateSetpoint(&setpoint, &sensorData, &state, tick);
 
-      controller(&control, &setpoint, &sensorData, &state, tick);
+      // TODO
+      // Call our own controller
+      // 
+
+      // controller(&control, &setpoint, &sensorData, &state, tick);
 
       checkEmergencyStopTimeout();
 
