@@ -37,6 +37,7 @@
 #include "motors.h"
 #include "pm.h"
 #include "platform.h"
+#include "num.h"
 
 #include "stabilizer.h"
 
@@ -73,7 +74,7 @@ static sensorData_t sensorData;
 // static pid_gains_t gains;
 static pid_gains_t *gains_arr[4];
 static state_t state;
-static control_t control;
+static control_output_t control;
 static motors_thrust_t motorPower;
 // For scratch storage - never logged or passed to other subsystems.
 static setpoint_t tempSetpoint;
@@ -289,6 +290,8 @@ static void stabilizerTask(void* param)
 
       collisionAvoidanceUpdateSetpoint(&setpoint, &sensorData, &state, tick);
 
+      // setpoint.position.z = 
+
       // TODO
       // Call our own controller
       // 
@@ -311,7 +314,27 @@ static void stabilizerTask(void* param)
       if (emergencyStop || (systemIsArmed() == false)) {
         motorsStop();
       } else {
-        powerDistribution(&motorPower, &control);
+        //powerDistribution(&motorPower, &control);
+          float r = control.pitch / 2.0f;
+          float p = control.pitch / 2.0f;
+          motorPower.m1 = limitUint16((double)(control.thrust - r + p + control.yaw));
+          motorPower.m2 = limitUint16((double)(control.thrust - r - p - control.yaw));
+          motorPower.m3 =  limitUint16((double)(control.thrust + r - p + control.yaw));
+          motorPower.m4 =  limitUint16((double)(control.thrust + r + p - control.yaw));
+          uint32_t idleThrust = 0;
+          if (motorPower.m1 < idleThrust) {
+            motorPower.m1 = idleThrust;
+          }
+          if (motorPower.m2 < idleThrust) {
+            motorPower.m2 = idleThrust;
+          }
+          if (motorPower.m3 < idleThrust) {
+            motorPower.m3 = idleThrust;
+          }
+          if (motorPower.m4 < idleThrust) {
+            motorPower.m4 = idleThrust;
+          }
+
         motorsSetRatio(MOTOR_M1, motorPower.m1);
         motorsSetRatio(MOTOR_M2, motorPower.m2);
         motorsSetRatio(MOTOR_M3, motorPower.m3);

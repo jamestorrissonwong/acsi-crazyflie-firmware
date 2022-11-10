@@ -46,7 +46,7 @@ void computePID(pid_gains_t *gains, float state, float setpoint, float *control)
 
     gains->prev_err = error; 
 
-    *control = proportional + integral+ derivative; 
+    *control = proportional + integral + derivative; 
 }
 
 void copterGainsInit(pid_gains_t **gains_arr, float *KP, float *KI, float *KD){
@@ -63,7 +63,7 @@ void copterGainsInit(pid_gains_t **gains_arr, float *KP, float *KI, float *KD){
     }
 }
 
-void copterPIDWrapper(pid_gains_t **gains_arr, state_t *all_state, setpoint_t *all_setpoint, control_t *control) {
+void copterPIDWrapper(pid_gains_t **gains_arr, state_t *all_state, setpoint_t *all_setpoint, control_output_t *control) {
     float g = 9.81;
     float additive_arr[4] = {g, 0.0, 0.0, 0.0};
     float Ixx = 0.000023951;
@@ -74,7 +74,7 @@ void copterPIDWrapper(pid_gains_t **gains_arr, state_t *all_state, setpoint_t *a
     float phi = all_state->attitude.roll;
     float theta = all_state->attitude.pitch;
 
-    float multiplicative_arr[4] = {m/((float)cos(phi)*(float)cos(theta)), Ixx, Iyy, Izz};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
+    float multiplicative_arr[4] = {m/(cosf(phi)*cosf(theta)), Ixx, Iyy, Izz};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
     float temp_control[4];
     float state[4] = {all_state->position.z, all_state->attitude.pitch, all_state->attitude.roll, all_state->attitude.yaw};
 

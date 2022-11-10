@@ -31,7 +31,7 @@ float compute_pid(pid_gains_t *gains, float state, float setpoint, float *contro
 
 void copterGainsInit(pid_gains_t **gains_arr, float *KP, float *KI, float *KD);
 
-void copterPIDWrapper(pid_gains_t **gains_arr, state_t *state, setpoint_t *setpoint, control_t *control);
+void copterPIDWrapper(pid_gains_t **gains_arr, state_t *state, setpoint_t *setpoint, control_output_t *control);
 
 // void controllerPidInit(void);
 // bool controllerPidTest(void);
