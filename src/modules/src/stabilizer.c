@@ -57,7 +57,9 @@
 #include "static_mem.h"
 #include "rateSupervisor.h"
 
-#include "custom_pid_contoller.h"
+#include "custom_pid_controller.h"
+
+#define CONTROLLER_RATE RATE_100_HZ
 
 static bool isInit;
 static bool emergencyStop = false;
@@ -68,6 +70,8 @@ static uint32_t inToOutLatency;
 // State variables for the stabilizer
 static setpoint_t setpoint;
 static sensorData_t sensorData;
+// static pid_gains_t gains;
+static pid_gains_t *gains_arr[4];
 static state_t state;
 static control_t control;
 static motors_thrust_t motorPower;
@@ -183,6 +187,8 @@ void stabilizerInit(StateEstimatorType estimator)
   estimatorType = getStateEstimator();
   controllerType = getControllerType();
 
+  copterGainsInit(gains_arr);
+
   STATIC_MEM_TASK_CREATE(stabilizerTask, stabilizerTask, STABILIZER_TASK_NAME, NULL, STABILIZER_TASK_PRI);
 
   isInit = true;
@@ -269,18 +275,23 @@ static void stabilizerTask(void* param)
     // Get setpoint from trajectory planner -- return as setpointCompressed
     // getSetpointFromTrajectory(&setpointCompressed)
 
-      // if (crtpCommanderHighLevelGetSetpoint(&tempSetpoint, &state, tick)) {
-      //   commanderSetSetpoint(&tempSetpoint, COMMANDER_PRIORITY_HIGHLEVEL);
-      // }
+    if (crtpCommanderHighLevelGetSetpoint(&tempSetpoint, &state, tick)) {
+      commanderSetSetpoint(&tempSetpoint, COMMANDER_PRIORITY_HIGHLEVEL);
+    }
 
-      // commanderGetSetpoint(&setpoint, &state);
-      // compressSetpoint();
+      commanderGetSetpoint(&setpoint, &state);
+      compressSetpoint();
 
       collisionAvoidanceUpdateSetpoint(&setpoint, &sensorData, &state, tick);
 
       // TODO
       // Call our own controller
       // 
+
+      if (RATE_DO_EXECUTE(CONTROLLER_RATE, tick)) {
+        //computePID(&gains, &state, &setpoint, &control);
+        copterPIDWrapper(gains_arr, &state, &setpoint, &control);
+      }
 
       // controller(&control, &setpoint, &sensorData, &state, tick);
 
