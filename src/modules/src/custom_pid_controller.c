@@ -3,7 +3,7 @@
 */
 #include "stabilizer_types.h"
 #include "custom_pid_controller.h"
-#include <math3d.h>
+#include <math.h>
 
 // PID should have 3 gains for each control output
 // typedef struct { 
@@ -70,12 +70,12 @@ void copterPIDWrapper(pid_gains_t **gains_arr, state_t *all_state, setpoint_t *a
     float Ixx = .000023951;
     float Iyy = Ixx;
     float Izz = 0.00000362347;
-    float m = 0.027
+    float m = 0.027;
 
     float phi = all_state->attitude.roll;
     float theta = all_state->attitude.pitch;
 
-    float multiplicative_arr[4] = {m/(math.cos(phi)*math.cos(theta)), Ixx, Iyy, Izz};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
+    float multiplicative_arr[4] = {m/((float)cos(phi)*(float)cos(theta)), Ixx, Iyy, Izz};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
     float temp_control[4];
     float state[4] = {all_state->position.z, all_state->attitude.pitch, all_state->attitude.roll, all_state->attitude.yaw};
 
