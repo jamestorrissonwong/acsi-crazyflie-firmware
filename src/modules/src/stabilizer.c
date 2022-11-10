@@ -819,3 +819,12 @@ LOG_ADD(LOG_INT16, ratePitch, &stateCompressed.ratePitch)
  */
 LOG_ADD(LOG_INT16, rateYaw, &stateCompressed.rateYaw)
 LOG_GROUP_STOP(stateEstimateZ)
+
+LOG_GROUP_START(PID_OUT)
+
+LOG_ADD(LOG_FLOAT, thrust, &control.thrust)
+LOG_ADD(LOG_INT16, roll, &control.roll)
+LOG_ADD(LOG_INT16, pitch, &control.pitch)
+LOG_ADD(LOG_INT16, yaw, &control.yaw)
+
+LOG_GROUP_STOP(PID_OUT)

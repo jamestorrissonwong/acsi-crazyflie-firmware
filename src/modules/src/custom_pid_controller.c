@@ -65,9 +65,8 @@ void copterGainsInit(pid_gains_t **gains_arr, float *KP, float *KI, float *KD){
 
 void copterPIDWrapper(pid_gains_t **gains_arr, state_t *all_state, setpoint_t *all_setpoint, control_t *control) {
     float g = 9.81;
-    float zero = 0.0;
-    float additive_arr[4] = {g, zero, zero, zero};
-    float Ixx = .000023951;
+    float additive_arr[4] = {g, 0.0, 0.0, 0.0};
+    float Ixx = 0.000023951;
     float Iyy = Ixx;
     float Izz = 0.00000362347;
     float m = 0.027;
