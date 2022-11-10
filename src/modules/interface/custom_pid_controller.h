@@ -1,20 +1,14 @@
 /* 
 
 */
-
-#include "param.h"
-#include "math3d.h"
-
-
 #include "stabilizer_types.h"
+#include "stabilizer.h"
 
 #define INTEGRAL_SATURATION 5000
 #define DT 1/CONTROLLER_RATE
 
 // thrust, pitch/theta, roll/phi, yaw/psi
-#define KP {100, 100, 100, 100}
-#define KI {10, 10, 10, 10}
-#define KD {1, 1, 1, 1}
+
 
 typedef struct { 
     float acc_err;
@@ -35,7 +29,7 @@ void gainsInit(pid_gains_t *gains, float kp, float ki, float kd);
 
 float compute_pid(pid_gains_t *gains, float state, float setpoint, float *control);
 
-void copterGainsInit(pid_gains_t **gains_arr);
+void copterGainsInit(pid_gains_t **gains_arr, float *KP, float *KI, float *KD);
 
 void copterPIDWrapper(pid_gains_t **gains_arr, state_t *state, setpoint_t *setpoint, control_t *control);
 

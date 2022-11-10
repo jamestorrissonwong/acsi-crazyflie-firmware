@@ -1,38 +1,25 @@
 /* 
 
 */
-
-#include "log.h"
-#include "param.h"
-#include "math3d.h"
-
 #include "stabilizer_types.h"
 #include "custom_pid_controller.h"
 
-#define INTEGRAL_SATURATION 5000
-#define DT 1/CONTROLLER_RATE
-#define G 9.81
-
-// thrust, pitch/theta, roll/phi, yaw/psi
-#define KP {100, 100, 100, 100}
-#define KI {10, 10, 10, 10}
-#define KD {1, 1, 1, 1}
 
 // PID should have 3 gains for each control output
-typedef struct { 
-    float acc_err;
-    float prev_err;
-    float kp;
-    float ki;
-    float kd;
-} pid_gains_t; 
+// typedef struct { 
+//     float acc_err;
+//     float prev_err;
+//     float kp;
+//     float ki;
+//     float kd;
+// } pid_gains_t; 
 
-typedef struct {
-    float thrust;
-    float pitch;
-    float roll;
-    float yaw;
-} control_output_t
+// typedef struct {
+//     float thrust;
+//     float pitch;
+//     float roll;
+//     float yaw;
+// } control_output_t
 
 void gainsInit(pid_gains_t *gains, float kp, float ki, float kd) {
     gains->acc_err = 0;
@@ -59,10 +46,10 @@ void computePID(pid_gains_t *gains, float state, float setpoint, float *control)
 
     gains->prev_err = error; 
 
-    float control = proportional + integral+ derivative; 
+    *control = proportional + integral+ derivative; 
 }
 
-void copterGainsInit(pid_gains_t **gains_arr){
+void copterGainsInit(pid_gains_t **gains_arr, float *KP, float *KI, float *KD){
     // pid_gains_t *thr_gains;
     // pid_gains_t *the_gains;
     // pid_gains_t *phi_gains;
@@ -77,16 +64,20 @@ void copterGainsInit(pid_gains_t **gains_arr){
 }
 
 void copterPIDWrapper(pid_gains_t **gains_arr, state_t *all_state, setpoint_t *all_setpoint, control_t *control) {
-    float *additive_arr = {9.81, 0, 0, 0};
-    float *multiplicative_arr = {};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
+    float g = 9.81;
+    float zero = 0.0;
+    float additive_arr[4] = {g, zero, zero, zero};
+    float multiplicative_arr[4] = {1.0, 1.0, 1.0, 1.0};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
     float temp_control[4];
-    float state = {all_state->position->z, all_state->attitude->pitch, all_state->attitude->roll, all_state->attitude->yaw};
-    float pos_setpoint = {all_setpoint->position->z, all_setpoint->attitude->pitch, all_setpoint->attitude->roll, all_setpoint->attitude->yaw};
-    float vel_setpoint = {all_setpoint->velocity->z, all_setpoint->attitudeRate->pitch, all_setpoint->attitudeRate->roll, all_setpoint->attitudeRate->yaw};
+    float state[4] = {all_state->position.z, all_state->attitude.pitch, all_state->attitude.roll, all_state->attitude.yaw};
+
+    float pos_setpoint[4] = {all_setpoint->position.z, all_setpoint->attitude.pitch, all_setpoint->attitude.roll, all_setpoint->attitude.yaw};
+    // float vel_setpoint[4] = {all_setpoint->velocity.z, all_setpoint->attitudeRate.pitch, all_setpoint->attitudeRate.roll, all_setpoint->attitudeRate.yaw};
 
     for (int i = 0; i < 4; i++){
         pid_gains_t *gains_curr = gains_arr[i];
         computePID(gains_curr, state[i], pos_setpoint[i], &temp_control[i]);
+        temp_control[i] = (temp_control[i]+additive_arr[i])*multiplicative_arr[i];
     }
 
     control->thrust = temp_control[0];

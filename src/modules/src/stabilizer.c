@@ -187,7 +187,12 @@ void stabilizerInit(StateEstimatorType estimator)
   estimatorType = getStateEstimator();
   controllerType = getControllerType();
 
-  copterGainsInit(gains_arr);
+  // SET PID GAINS
+  float KP[4] = {100.0, 100.0, 100.0, 100.0};
+  float KI[4] = {10.0, 10.0, 10.0, 10.0};
+  float KD[4] = {1.0, 1.0, 1.0, 1.0};
+
+  copterGainsInit(gains_arr, KP, KI, KD);
 
   STATIC_MEM_TASK_CREATE(stabilizerTask, stabilizerTask, STABILIZER_TASK_NAME, NULL, STABILIZER_TASK_PRI);
 

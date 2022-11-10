@@ -32,6 +32,7 @@
 #include "estimator.h"
 
 #define EMERGENCY_STOP_TIMEOUT_DISABLED (-1)
+#define CONTROLLER_RATE RATE_100_HZ
 
 /**
  * Initialize the stabilizer subsystem and launch the stabilizer loop task.
