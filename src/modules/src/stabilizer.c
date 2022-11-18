@@ -549,7 +549,11 @@ LOG_ADD(LOG_FLOAT, yaw, &state.attitude.yaw)
 /**
  * @brief Current thrust
  */
-LOG_ADD(LOG_FLOAT, thrust, &control.thrust)
+LOG_ADD(LOG_FLOAT, controlthrust, &control.thrust)
+
+LOG_ADD_CORE(LOG_FLOAT, controlroll, &control.roll)
+LOG_ADD_CORE(LOG_FLOAT, controlpitch, &control.pitch)
+LOG_ADD_CORE(LOG_FLOAT, controlyaw, &control.yaw)
 /**
  * @brief Rate of stabilizer loop
  */
@@ -560,6 +564,15 @@ STATS_CNT_RATE_LOG_ADD(rtStab, &stabilizerRate)
  */
 LOG_ADD(LOG_UINT32, intToOut, &inToOutLatency)
 LOG_GROUP_STOP(stabilizer)
+
+LOG_GROUP_START(pidOut)
+
+LOG_ADD_CORE(LOG_FLOAT, thrust, &control.thrust)
+LOG_ADD_CORE(LOG_FLOAT, roll, &control.roll)
+LOG_ADD_CORE(LOG_FLOAT, pitch, &control.pitch)
+LOG_ADD_CORE(LOG_FLOAT, yaw, &control.yaw)
+
+LOG_GROUP_STOP(pidOut)
 
 /**
  * Log group for accelerometer sensor measurement, based on body frame.
@@ -843,11 +856,3 @@ LOG_ADD(LOG_INT16, ratePitch, &stateCompressed.ratePitch)
 LOG_ADD(LOG_INT16, rateYaw, &stateCompressed.rateYaw)
 LOG_GROUP_STOP(stateEstimateZ)
 
-LOG_GROUP_START(PID_OUT)
-
-LOG_ADD_CORE(LOG_FLOAT, thrust, &control.thrust)
-LOG_ADD_CORE(LOG_INT16, roll, &control.roll)
-LOG_ADD_CORE(LOG_INT16, pitch, &control.pitch)
-LOG_ADD_CORE(LOG_INT16, yaw, &control.yaw)
-
-LOG_GROUP_STOP(PID_OUT)
