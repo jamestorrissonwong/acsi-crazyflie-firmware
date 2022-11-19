@@ -403,15 +403,15 @@ static bool updateQueuedMeasurements(const uint32_t tick) {
         break;
       case MeasurementTypeGyroscope:
         gyroAccumulator.x += m.data.gyroscope.gyro.x;
-        gyroAccumulator.y += m.data.gyroscope.gyro.y;
-        gyroAccumulator.z += m.data.gyroscope.gyro.z;
+        gyroAccumulator.y -= m.data.gyroscope.gyro.y;
+        gyroAccumulator.z -= m.data.gyroscope.gyro.z;
         gyroLatest = m.data.gyroscope.gyro;
         gyroAccumulatorCount++;
         break;
       case MeasurementTypeAcceleration:
         accAccumulator.x += m.data.acceleration.acc.x;
-        accAccumulator.y += m.data.acceleration.acc.y;
-        accAccumulator.z += m.data.acceleration.acc.z;
+        accAccumulator.y -= m.data.acceleration.acc.y;
+        accAccumulator.z -= m.data.acceleration.acc.z;
         accLatest = m.data.acceleration.acc;
         accAccumulatorCount++;
         break;
