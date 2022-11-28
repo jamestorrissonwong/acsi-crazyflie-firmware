@@ -1,30 +1,27 @@
-#include "cf_math.h"
-#include "stabilizer_types.h"
 #include "rls_mass_estimator.h"
-#include "custom_pid_controller.h"
 
-typedef struct{
-    float lambda;
-    __attribute__((aligned(4))) float y;
-    arm_matrix_instance_f32 ym;
+// typedef struct{
+//     float lambda;
+//     __attribute__((aligned(4))) float *y;
+//     arm_matrix_instance_f32 ym;
 
-    __attribute__((aligned(4))) float L[2][1]; // Is this correct?
-    arm_matrix_instance_f32 Lm;
+//     __attribute__((aligned(4))) float L[2][1]; // Is this correct?
+//     arm_matrix_instance_f32 Lm;
 
-    __attribute__((aligned(4))) float phi[2][1]; // Is this correct?
-    arm_matrix_instance_f32 phim;
+//     __attribute__((aligned(4))) float phi[2][1]; // Is this correct?
+//     arm_matrix_instance_f32 phim;
 
-    __attribute__((aligned(4))) float theta[2][1]; // Is this correct?
-    arm_matrix_instance_f32 thetam;
+//     __attribute__((aligned(4))) float theta[2][1]; // Is this correct?
+//     arm_matrix_instance_f32 thetam;
 
-    __attribute__((aligned(4))) float P[1][1]; // Is this correct?
-    arm_matrix_instance_f32 Pm;
+//     __attribute__((aligned(4))) float P[1][1]; // Is this correct?
+//     arm_matrix_instance_f32 Pm;
 
-} massEst_t;
+// } massEst_t;
 
 void rls_init(massEst_t *me){
     me->lambda = 0.5; 
-    me->y = 27;
+    *me->y = 27;
     me->ym.numCols = 1;
     me->ym.numRows = 1;
     me->ym.pData = (float*)me->y;
@@ -49,19 +46,19 @@ void rls_init(massEst_t *me){
 
 void update_phi(control_output_t *control, state_t *state, massEst_t *me){
     float T = control->thrust;
-    float x = state->position.x;
-    float z = state->position.z;
+    // float x = state->position.x;
+    // float z = state->position.z;
 
     float xacc = state->acc.x;
     float zacc = state->acc.z;
 
     float theta = state->attitude.pitch; // is this in rad? 
 
-    float phi1 = -T*arm_sin_f32(theta) - (9.18e-7*xacc);
-    float phi2 = T*arm_cos_f32(theta) - (1.03e-6*zacc);
+    float phi1 = -T*arm_sin_f32(theta) - ((float)(9.18e-7)*xacc);
+    float phi2 = T*arm_cos_f32(theta) - ((float)(1.03e-6)*zacc);
 
-    me->phi[0] = phi1;
-    me->phi[1] = phi2;
+    me->phi[0][1] = phi1;
+    me->phi[1][1] = phi2;
 }
 
 float rls_estimate(control_output_t *control, state_t *state, massEst_t *me){
@@ -91,29 +88,29 @@ float rls_estimate(control_output_t *control, state_t *state, massEst_t *me){
     static arm_matrix_instance_f32 tmp8m = {2, 2, tmp8d}; // 
 
     // L = (P*phi)*(lambda + (phi'*P*phi))^-1;
-    mat_mult(me->Pm, me->phim, tmp1m); // P*phi
-    mat_trans(me->phim, tmp2m); // phi'
-    mat_mult(tmp2m, tmp1m, tmp3m); // phi' * P * phi
-    float den = 1.0/(me->lambda + tmp3m->pData); // (phi' * P * phi)^-1
-    mat_scale(tmp1m,den,me->Lm);
+    mat_mult(&me->Pm, &me->phim, &tmp1m); // P*phi
+    mat_trans(&me->phim, &tmp2m); // phi'
+    mat_mult(&tmp2m, &tmp1m, &tmp3m); // phi' * P * phi
+    float den = (float)1.0/(me->lambda + *tmp3m.pData); // (phi' * P * phi)^-1
+    mat_scale(&tmp1m, den, &me->Lm);
 
 
     // P = (I - L*phi')P*1/lambda 
     tmpId[0] = 1;
     tmpId[3] = 1;
 
-    mat_mult(me->Lm, tmp2m, tmp4m); //L*phi'
-    arm_sub_f32(tmpIm, tmp4m, tmp5m); //(I - L*phi')
-    mat_mult(tmp5m, me->Pm, me->Pm); //(I - L*phi')P
-    mat_scale(me->Pm, 1.0/(me->lambda), me->Pm); 
+    mat_mult(&me->Lm, &tmp2m, &tmp4m); //L*phi'
+    arm_mat_sub_f32(&tmpIm, &tmp4m, &tmp5m); //(I - L*phi')
+    mat_mult(&tmp5m, &me->Pm, &me->Pm); //(I - L*phi')P
+    mat_scale(&me->Pm, (float)1.0/(me->lambda), &me->Pm); 
 
     // theta = theta + L(y-phi'*theta)
-    mat_mult(tmp2m, me->theta, tmp6m); //phi'*theta
-    arm_sub_f32(me->ym, tmp6m, tmp7m); // y-phi'*theta
-    mat_mult(me->Lm, tmp7m, tmp8m); // L(y-phi'*theta)
-    arm_mat_add_f32(me->theta, tmp8m, me->theta);
+    mat_mult(&tmp2m, &me->thetam, &tmp6m); //phi'*theta
+    arm_mat_sub_f32(&me->ym, &tmp6m, &tmp7m); // y-phi'*theta
+    mat_mult(&me->Lm, &tmp7m, &tmp8m); // L(y-phi'*theta)
+    arm_mat_add_f32(&me->thetam, &tmp8m, &me->thetam);
     
-    mat_mult(tmp2m, me->theta, me->ym);
+    mat_mult(&tmp2m, &me->thetam, &me->ym);
 
-    return 1.0/(me->y);
+    return (float)1.0/(*me->y);
 }

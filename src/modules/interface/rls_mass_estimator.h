@@ -1,9 +1,11 @@
 #include "cf_math.h"
 #include "stabilizer_types.h"
+#include "custom_pid_controller.h"
+#include "static_mem.h"
 
 typedef struct{
     float lambda;
-    __attribute__((aligned(4))) float y;
+    __attribute__((aligned(4))) float *y;
     arm_matrix_instance_f32 ym;
 
     __attribute__((aligned(4))) float L[2][1]; // Is this correct?

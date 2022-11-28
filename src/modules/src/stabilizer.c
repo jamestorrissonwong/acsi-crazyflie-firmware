@@ -58,7 +58,7 @@
 #include "static_mem.h"
 #include "rateSupervisor.h"
 
-#include "custom_pid_controller.h"
+// #include "custom_pid_controller.h"
 #include "rls_mass_estimator.h"
 
 #define CONTROLLER_RATE RATE_100_HZ
