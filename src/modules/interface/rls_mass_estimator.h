@@ -5,19 +5,19 @@
 
 typedef struct{
     float lambda;
-    __attribute__((aligned(4))) float *y;
+    __attribute__((aligned(4))) float y[3][1];
     arm_matrix_instance_f32 ym;
 
-    __attribute__((aligned(4))) float L[2][1]; // Is this correct?
+    __attribute__((aligned(4))) float L[3][3]; // Is this correct?
     arm_matrix_instance_f32 Lm;
 
-    __attribute__((aligned(4))) float phi[2][1]; // Is this correct?
+    __attribute__((aligned(4))) float phi[3][3]; // Is this correct?
     arm_matrix_instance_f32 phim;
 
-    __attribute__((aligned(4))) float theta[2][1]; // Is this correct?
+    __attribute__((aligned(4))) float theta[3][1]; // Is this correct?
     arm_matrix_instance_f32 thetam;
 
-    __attribute__((aligned(4))) float P[1][1]; // Is this correct?
+    __attribute__((aligned(4))) float P[3][3]; // Is this correct?
     arm_matrix_instance_f32 Pm;
 
 } massEst_t;
