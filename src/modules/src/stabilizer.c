@@ -279,8 +279,8 @@ static void stabilizerTask(void* param)
 
       stateEstimator(&state, tick);
       compressState();
-      rls_estimate(&state, &massEst);
-
+      rls_estimate(&control, &state, &massEst);
+ 
     // TODO
     // Get setpoint from trajectory planner -- return as setpointCompressed
     // getSetpointFromTrajectory(&setpointCompressed)

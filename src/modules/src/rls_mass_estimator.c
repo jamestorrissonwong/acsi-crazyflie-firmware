@@ -1,6 +1,7 @@
 #include "cf_math.h"
 #include "stabilizer_types.h"
 #include "rls_mass_estimator.h"
+#include "custom_pid_controller.h"
 
 typedef struct{
     float lambda;
@@ -46,8 +47,26 @@ void rls_init(massEst_t *me){
     return;
 }
 
-float rls_estimate(state_t *state, massEst_t *me){
+void update_phi(control_output_t *control, state_t *state, massEst_t *me){
+    float T = control->thrust;
+    float x = state->position.x;
+    float z = state->position.z;
+
+    float xacc = state->acc.x;
+    float zacc = state->acc.z;
+
+    float theta = state->attitude.pitch; // is this in rad? 
+
+    float phi1 = -T*arm_sin_f32(theta) - (9.18e-7*xacc);
+    float phi2 = T*arm_cos_f32(theta) - (1.03e-6*zacc);
+
+    me->phi[0] = phi1;
+    me->phi[1] = phi2;
+}
+
+float rls_estimate(control_output_t *control, state_t *state, massEst_t *me){
     // regressor update?
+    update_phi(control, state, me);
     
     // Temporary matrices
     NO_DMA_CCM_SAFE_ZERO_INIT __attribute__((aligned(4))) static float tmp1d[2];
