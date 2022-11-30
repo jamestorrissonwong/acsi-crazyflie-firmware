@@ -63,9 +63,9 @@ void update_phi(control_t *control, state_t *state, massEst_t *me){
     float yvel = state->velocity.y;
     float zvel = state->velocity.z;
 
-    float xacc = state->acc.x;
-    float yacc = state->acc.y;
-    float zacc = state->acc.z + (float)9.81;
+    float xacc = (float)9.81*(state->acc.x);     // need to convert to m/s2
+    float yacc = (float)9.81*(state->acc.y);
+    float zacc = (float)9.81*(state->acc.z) + (float)9.81;
 
     float theta = PI*(state->attitude.pitch)/180; // is this in rad? 
     float phi = PI*(state->attitude.roll)/180; 
@@ -145,6 +145,12 @@ float rls_estimate(control_t *control, state_t *state, massEst_t *me){
     // float xest = (float)1.0/(me->y[0][0]);
     // float yest = (float)1.0/(me->y[1][0]);
     float zest = (float)1.0/(me->theta[2][0]);
+
+    /* NaN is the only floating point value that does NOT equal itself.
+    * Therefore if n != n, then it is NaN. */
+    if (zest!=zest) {
+        zest = -1.0;
+    }
 
     return zest;
 }
