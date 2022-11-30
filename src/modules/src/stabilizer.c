@@ -58,7 +58,8 @@
 #include "static_mem.h"
 #include "rateSupervisor.h"
 
-#include "custom_pid_controller.h"
+// #include "custom_pid_controller.h"
+#include "rls_mass_estimator.h"
 
 #define CONTROLLER_RATE RATE_100_HZ
 
@@ -71,6 +72,7 @@ static uint32_t inToOutLatency;
 // State variables for the stabilizer
 static setpoint_t setpoint;
 static sensorData_t sensorData;
+static massEst_t massEst;
 // static pid_gains_t gains;
 static pid_gains_t *gains_arr[4];
 static state_t state;
@@ -194,6 +196,7 @@ void stabilizerInit(StateEstimatorType estimator)
   float KD[4] = {1.0, 1.0, 1.0, 1.0};
 
   copterGainsInit(gains_arr, KP, KI, KD);
+  rls_init(&massEst);
 
   STATIC_MEM_TASK_CREATE(stabilizerTask, stabilizerTask, STABILIZER_TASK_NAME, NULL, STABILIZER_TASK_PRI);
 
@@ -276,7 +279,8 @@ static void stabilizerTask(void* param)
 
       stateEstimator(&state, tick);
       compressState();
-
+      rls_estimate(&control, &state, &massEst);
+ 
     // TODO
     // Get setpoint from trajectory planner -- return as setpointCompressed
     // getSetpointFromTrajectory(&setpointCompressed)
