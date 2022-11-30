@@ -563,16 +563,19 @@ STATS_CNT_RATE_LOG_ADD(rtStab, &stabilizerRate)
  *    Note: Used for debugging but could also be used as a system test
  */
 LOG_ADD(LOG_UINT32, intToOut, &inToOutLatency)
+
+LOG_ADD_CORE(LOG_FLOAT, pidthrust, &control.thrust)
+
 LOG_GROUP_STOP(stabilizer)
 
-LOG_GROUP_START(pidOut)
+// LOG_GROUP_START(pidOut)
 
-LOG_ADD_CORE(LOG_FLOAT, thrust, &control.thrust)
-LOG_ADD_CORE(LOG_FLOAT, roll, &control.roll)
-LOG_ADD_CORE(LOG_FLOAT, pitch, &control.pitch)
-LOG_ADD_CORE(LOG_FLOAT, yaw, &control.yaw)
+// LOG_ADD_CORE(LOG_FLOAT, thrust, &control.thrust)
+// LOG_ADD_CORE(LOG_FLOAT, roll, &control.roll)
+// LOG_ADD_CORE(LOG_FLOAT, pitch, &control.pitch)
+// LOG_ADD_CORE(LOG_FLOAT, yaw, &control.yaw)
 
-LOG_GROUP_STOP(pidOut)
+// LOG_GROUP_STOP(pidOut)
 
 /**
  * Log group for accelerometer sensor measurement, based on body frame.
