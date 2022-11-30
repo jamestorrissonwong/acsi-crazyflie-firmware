@@ -24,6 +24,6 @@ typedef struct{
 
 void rls_init(massEst_t *me);
 
-void update_phi(control_output_t *control, state_t *state, massEst_t *me);
+void update_phi(control_t *control, state_t *state, massEst_t *me);
 
-float rls_estimate(control_output_t *control, state_t *state, massEst_t *me);
+float rls_estimate(control_t *control, state_t *state, massEst_t *me);

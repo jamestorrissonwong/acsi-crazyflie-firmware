@@ -57,7 +57,7 @@ void rls_init(massEst_t *me){
     return;
 }
 
-void update_phi(control_output_t *control, state_t *state, massEst_t *me){
+void update_phi(control_t *control, state_t *state, massEst_t *me){
     float T = control->thrust;
     float xvel = state->velocity.x;
     float yvel = state->velocity.y;
@@ -83,7 +83,7 @@ void update_phi(control_output_t *control, state_t *state, massEst_t *me){
     me->y[2][0] = zacc;
 }
 
-float rls_estimate(control_output_t *control, state_t *state, massEst_t *me){
+float rls_estimate(control_t *control, state_t *state, massEst_t *me){
     // regressor update?
     update_phi(control, state, me);
 
