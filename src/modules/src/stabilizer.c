@@ -72,11 +72,13 @@ static uint32_t inToOutLatency;
 // State variables for the stabilizer
 static setpoint_t setpoint;
 static sensorData_t sensorData;
+static float massPred;
 static massEst_t massEst;
 // static pid_gains_t gains;
 static pid_gains_t *gains_arr[4];
 static state_t state;
-static control_output_t control;
+static control_t control;
+//static control_output_t control;
 static motors_thrust_t motorPower;
 // For scratch storage - never logged or passed to other subsystems.
 static setpoint_t tempSetpoint;
@@ -279,7 +281,7 @@ static void stabilizerTask(void* param)
 
       stateEstimator(&state, tick);
       compressState();
-      rls_estimate(&control, &state, &massEst);
+      massPred = rls_estimate(&control, &state, &massEst);
  
     // TODO
     // Get setpoint from trajectory planner -- return as setpointCompressed
@@ -300,12 +302,12 @@ static void stabilizerTask(void* param)
       // Call our own controller
       // 
 
-      if (RATE_DO_EXECUTE(CONTROLLER_RATE, tick)) {
-        //computePID(&gains, &state, &setpoint, &control);
-        copterPIDWrapper(gains_arr, &state, &setpoint, &control);
-      }
+      // if (RATE_DO_EXECUTE(CONTROLLER_RATE, tick)) {
+      //   //computePID(&gains, &state, &setpoint, &control);
+      //   copterPIDWrapper(gains_arr, &state, &setpoint, &control);
+      // }
 
-      // controller(&control, &setpoint, &sensorData, &state, tick);
+      controller(&control, &setpoint, &sensorData, &state, tick);
 
       checkEmergencyStopTimeout();
 
@@ -569,6 +571,7 @@ STATS_CNT_RATE_LOG_ADD(rtStab, &stabilizerRate)
 LOG_ADD(LOG_UINT32, intToOut, &inToOutLatency)
 
 LOG_ADD_CORE(LOG_FLOAT, pidthrust, &control.thrust)
+LOG_ADD_CORE(LOG_FLOAT, massEst, &massPred)
 
 LOG_GROUP_STOP(stabilizer)
 
