@@ -72,7 +72,7 @@ static uint32_t inToOutLatency;
 // State variables for the stabilizer
 static setpoint_t setpoint;
 static sensorData_t sensorData;
-static float massPred;
+static int16_t massPred;
 static massEst_t massEst;
 // static pid_gains_t gains;
 static state_t state;
@@ -191,6 +191,17 @@ static void compressSetpoint()
   setpointCompressed.az = setpoint.acceleration.z * 1000.0f;
 }
 
+static inline int16_t saturateSignedInt16(float in)
+{
+  // don't use INT16_MIN, because later we may negate it, which won't work for that value.
+  if (in > INT16_MAX)
+    return INT16_MAX;
+  else if (in < -INT16_MAX)
+    return -INT16_MAX;
+  else
+    return (int16_t)in;
+}
+
 void stabilizerInit(StateEstimatorType estimator)
 {
   if(isInit)
@@ -297,7 +308,7 @@ static void stabilizerTask(void* param)
 
       stateEstimator(&state, tick);
       compressState();
-      massPred = rls_estimate(&control, &state, &massEst);
+      massPred = saturateSignedInt16(rls_estimate(&control, &state, &massEst));
  
     // TODO
     // Get setpoint from trajectory planner -- return as setpointCompressed
@@ -590,7 +601,7 @@ STATS_CNT_RATE_LOG_ADD(rtStab, &stabilizerRate)
 LOG_ADD(LOG_UINT32, intToOut, &inToOutLatency)
 
 LOG_ADD_CORE(LOG_FLOAT, pidthrust, &control.thrust)
-LOG_ADD_CORE(LOG_FLOAT, massEst, &massPred)
+LOG_ADD_CORE(LOG_FLOAT, massestimate, &massPred)
 
 LOG_GROUP_STOP(stabilizer)
 
