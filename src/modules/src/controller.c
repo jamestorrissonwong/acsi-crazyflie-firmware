@@ -6,10 +6,12 @@
 #include "controller_pid.h"
 #include "controller_mellinger.h"
 #include "controller_indi.h"
+#include "custom_pid_controller.h"
 
 #include "autoconf.h"
 
-#define DEFAULT_CONTROLLER ControllerTypePID
+// #define DEFAULT_CONTROLLER ControllerTypePID
+#define DEFAULT_CONTROLLER ControllerTypeCustom
 static ControllerType currentController = ControllerTypeAny;
 
 static void initController();
@@ -26,6 +28,7 @@ static ControllerFcns controllerFunctions[] = {
   {.init = controllerPidInit, .test = controllerPidTest, .update = controllerPid, .name = "PID"},
   {.init = controllerMellingerInit, .test = controllerMellingerTest, .update = controllerMellinger, .name = "Mellinger"},
   {.init = controllerINDIInit, .test = controllerINDITest, .update = controllerINDI, .name = "INDI"},
+  {.init = customDummyInit, .test = customControllerTest, .update = copterPIDWrapper, .name = "Custom"}
 };
 
 
@@ -46,6 +49,8 @@ void controllerInit(ControllerType controller) {
     #define CONTROLLER ControllerTypeINDI
   #elif defined(CONFIG_CONTROLLER_MELLINGER)
     #define CONTROLLER ControllerTypeMellinger
+  #elif defined(CONFIG_CONTROLLER_CUSTOM)
+    #define CONTROLLER ControllerTypeCustom
   #else
     #define CONTROLLER ControllerTypeAny
   #endif

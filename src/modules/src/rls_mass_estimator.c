@@ -42,9 +42,9 @@ void rls_init(massEst_t *me){
     me->thetam.numRows = 3;
     me->thetam.pData = (float*)me->theta;
 
-    me->theta[0][0] = (float)1.0/(30.9/1000);
-    me->theta[1][0] = (float)1.0/(30.9/1000);
-    me->theta[2][0] = (float)1.0/(30.9/1000);
+    me->theta[0][0] = ((float)1.0)/((float)30.9/1000);
+    me->theta[1][0] = ((float)1.0)/((float)30.9/1000);
+    me->theta[2][0] = ((float)1.0)/((float)30.9/1000);
 
     me->Pm.numCols = 3;
     me->Pm.numRows = 3;

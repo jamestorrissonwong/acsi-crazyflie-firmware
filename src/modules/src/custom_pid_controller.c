@@ -21,6 +21,21 @@
 //     float yaw;
 // } control_output_t
 
+static bool isInit;
+static pid_gains_t *gains_arr[NUM_PID];
+
+
+static inline int16_t saturateSignedInt16(float in)
+{
+  // don't use INT16_MIN, because later we may negate it, which won't work for that value.
+  if (in > INT16_MAX)
+    return INT16_MAX;
+  else if (in < -INT16_MAX)
+    return -INT16_MAX;
+  else
+    return (int16_t)in;
+}
+
 void gainsInit(pid_gains_t *gains, float kp, float ki, float kd) {
     gains->acc_err = 0;
     gains->prev_err = 0;
@@ -49,7 +64,7 @@ void computePID(pid_gains_t *gains, float state, float setpoint, float *control)
     *control = proportional + integral + derivative; 
 }
 
-void copterGainsInit(pid_gains_t **gains_arr, float *KP, float *KI, float *KD){
+void copterGainsInit(float *KP, float *KI, float *KD){
     // pid_gains_t *thr_gains;
     // pid_gains_t *the_gains;
     // pid_gains_t *phi_gains;
@@ -57,38 +72,52 @@ void copterGainsInit(pid_gains_t **gains_arr, float *KP, float *KI, float *KD){
 
     // gains_arr = {thr_gains, the_gains, phi_gains, psi_gains};
 
-    for (int i = 0; i < 4; i++){
+    for (int i = 0; i < NUM_PID; i++){
         pid_gains_t *gains_curr = gains_arr[i]; 
         gainsInit(gains_curr, KP[i], KI[i], KD[i]);
     }
+
+    isInit = true; 
 }
 
-void copterPIDWrapper(pid_gains_t **gains_arr, state_t *all_state, setpoint_t *all_setpoint, control_output_t *control) {
+void customDummyInit(void){
+    return;
+}
+
+bool customControllerTest(void){
+    return isInit;
+}
+
+
+void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensorData_t *sensors, const state_t *all_state, const uint32_t tick) {
+    // MOVE THESE CONSTANTS
     float g = 9.81;
-    float additive_arr[4] = {g, 0.0, 0.0, 0.0};
+    float additive_arr[NUM_PID] = {g, 0.0, 0.0, 0.0};
     float Ixx = 0.000023951;
     float Iyy = Ixx;
     float Izz = 0.00000362347;
     float m = 0.027;
 
-    float phi = all_state->attitude.roll;
-    float theta = all_state->attitude.pitch;
+    if (RATE_DO_EXECUTE(ATTITUDE_RATE, tick)) {
+        float phi = all_state->attitude.roll;
+        float theta = all_state->attitude.pitch;
 
-    float multiplicative_arr[4] = {m/(cosf(phi)*cosf(theta)), Ixx, Iyy, Izz};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
-    float temp_control[4];
-    float state[4] = {all_state->position.z, all_state->attitude.pitch, all_state->attitude.roll, all_state->attitude.yaw};
+        float multiplicative_arr[NUM_PID] = {m/(cosf(phi)*cosf(theta)), Ixx, Iyy, Izz};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
+        float temp_control[NUM_PID];
+        float state[NUM_PID] = {all_state->position.z, all_state->attitude.pitch, all_state->attitude.roll, all_state->attitude.yaw};
 
-    float pos_setpoint[4] = {all_setpoint->position.z, all_setpoint->attitude.pitch, all_setpoint->attitude.roll, all_setpoint->attitude.yaw};
-    // float vel_setpoint[4] = {all_setpoint->velocity.z, all_setpoint->attitudeRate.pitch, all_setpoint->attitudeRate.roll, all_setpoint->attitudeRate.yaw};
+        float pos_setpoint[NUM_PID] = {all_setpoint->position.z, all_setpoint->attitude.pitch, all_setpoint->attitude.roll, all_setpoint->attitude.yaw};
+        // float vel_setpoint[4] = {all_setpoint->velocity.z, all_setpoint->attitudeRate.pitch, all_setpoint->attitudeRate.roll, all_setpoint->attitudeRate.yaw};
 
-    for (int i = 0; i < 4; i++){
-        pid_gains_t *gains_curr = gains_arr[i];
-        computePID(gains_curr, state[i], pos_setpoint[i], &temp_control[i]);
-        temp_control[i] = (temp_control[i]+additive_arr[i])*multiplicative_arr[i];
+        for (int i = 0; i < NUM_PID; i++){
+            pid_gains_t *gains_curr = gains_arr[i];
+            computePID(gains_curr, state[i], pos_setpoint[i], &temp_control[i]);
+            temp_control[i] = (temp_control[i]+additive_arr[i])*multiplicative_arr[i];
+        }
+
+        control->thrust = temp_control[0];
+        control->pitch = saturateSignedInt16(temp_control[1]);
+        control->roll = saturateSignedInt16(temp_control[2]);
+        control->yaw = saturateSignedInt16(temp_control[3]);
     }
-
-    control->thrust = temp_control[0];
-    control->pitch = temp_control[1];
-    control->roll = temp_control[2];
-    control->yaw = temp_control[3];
 }
