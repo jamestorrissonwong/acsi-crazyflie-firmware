@@ -75,7 +75,6 @@ static sensorData_t sensorData;
 static float massPred;
 static massEst_t massEst;
 // static pid_gains_t gains;
-static pid_gains_t *gains_arr[4];
 static state_t state;
 static control_t control;
 //static control_output_t control;
@@ -89,6 +88,13 @@ static ControllerType controllerType;
 static STATS_CNT_RATE_DEFINE(stabilizerRate, 500);
 static rateSupervisor_t rateSupervisorContext;
 static bool rateWarningDisplayed = false;
+
+static struct {
+  int16_t thrust;
+  int16_t roll;
+  int16_t pitch;
+  int16_t yaw;
+} controlCompressed;
 
 static struct {
   // position - mm
@@ -134,6 +140,13 @@ static void calcSensorToOutputLatency(const sensorData_t *sensorData)
 {
   uint64_t outTimestamp = usecTimestamp();
   inToOutLatency = outTimestamp - sensorData->interruptTimestamp;
+}
+
+static void compressControl(){
+  controlCompressed.thrust = control.thrust * 1000.0f; 
+  controlCompressed.roll = control.roll; 
+  controlCompressed.pitch = control.pitch;
+  controlCompressed.yaw = control.yaw;
 }
 
 static void compressState()
@@ -183,21 +196,23 @@ void stabilizerInit(StateEstimatorType estimator)
   if(isInit)
     return;
 
+  // SET PID GAINS
+  float KP[NUM_PID] = {1.0, 1.0, 1.0, 1.0};
+  float KI[NUM_PID] = {0.0, 0.0, 0.0, 0.0};
+  float KD[NUM_PID] = {1.0, 1.0, 1.0, 1.0};
+
+  copterGainsInit(KP, KI, KD);
+
   sensorsInit();
   stateEstimatorInit(estimator);
-  controllerInit(ControllerTypeAny);
+  controllerInit(ControllerTypeCustom);
+  // controllerInit(ControllerTypeAny);
   powerDistributionInit();
   motorsInit(platformConfigGetMotorMapping());
   collisionAvoidanceInit();
   estimatorType = getStateEstimator();
   controllerType = getControllerType();
 
-  // SET PID GAINS
-  float KP[4] = {1.0, 1.0, 1.0, 1.0};
-  float KI[4] = {0.0, 0.0, 0.0, 0.0};
-  float KD[4] = {1.0, 1.0, 1.0, 1.0};
-
-  copterGainsInit(gains_arr, KP, KI, KD);
   rls_init(&massEst);
 
   STATIC_MEM_TASK_CREATE(stabilizerTask, stabilizerTask, STABILIZER_TASK_NAME, NULL, STABILIZER_TASK_PRI);
@@ -273,11 +288,12 @@ static void stabilizerTask(void* param)
         stateEstimatorSwitchTo(estimatorType);
         estimatorType = getStateEstimator();
       }
+
       // allow to update controller dynamically
-      // if (getControllerType() != controllerType) {
-      //   controllerInit(controllerType);
-      //   controllerType = getControllerType();
-      // }
+      if (getControllerType() != controllerType) {
+        controllerInit(controllerType);
+        controllerType = getControllerType();
+      }
 
       stateEstimator(&state, tick);
       compressState();
@@ -310,6 +326,7 @@ static void stabilizerTask(void* param)
       controller(&control, &setpoint, &sensorData, &state, tick);
 
       checkEmergencyStopTimeout();
+      compressControl();
 
       //
       // The supervisor module keeps track of Crazyflie state such as if
@@ -320,32 +337,34 @@ static void stabilizerTask(void* param)
       if (emergencyStop || (systemIsArmed() == false)) {
         motorsStop();
       } else {
-        //powerDistribution(&motorPower, &control);
-          float r = control.pitch / 2.0f;
-          float p = control.pitch / 2.0f;
-          motorPower.m1 = limitUint16((double)(control.thrust - r + p + control.yaw));
-          motorPower.m2 = limitUint16((double)(control.thrust - r - p - control.yaw));
-          motorPower.m3 =  limitUint16((double)(control.thrust + r - p + control.yaw));
-          motorPower.m4 =  limitUint16((double)(control.thrust + r + p - control.yaw));
-          uint32_t idleThrust = 0;
-          if (motorPower.m1 < idleThrust) {
-            motorPower.m1 = idleThrust;
-          }
-          if (motorPower.m2 < idleThrust) {
-            motorPower.m2 = idleThrust;
-          }
-          if (motorPower.m3 < idleThrust) {
-            motorPower.m3 = idleThrust;
-          }
-          if (motorPower.m4 < idleThrust) {
-            motorPower.m4 = idleThrust;
-          }
-
-        motorsSetRatio(MOTOR_M1, motorPower.m1);
-        motorsSetRatio(MOTOR_M2, motorPower.m2);
-        motorsSetRatio(MOTOR_M3, motorPower.m3);
-        motorsSetRatio(MOTOR_M4, motorPower.m4);
+        powerDistribution(&motorPower, &control);
       }
+
+      //     float r = control.pitch / 2.0f;
+      //     float p = control.pitch / 2.0f;
+      //     motorPower.m1 = limitUint16((double)(control.thrust - r + p + control.yaw));
+      //     motorPower.m2 = limitUint16((double)(control.thrust - r - p - control.yaw));
+      //     motorPower.m3 =  limitUint16((double)(control.thrust + r - p + control.yaw));
+      //     motorPower.m4 =  limitUint16((double)(control.thrust + r + p - control.yaw));
+      //     uint32_t idleThrust = 0;
+      //     if (motorPower.m1 < idleThrust) {
+      //       motorPower.m1 = idleThrust;
+      //     }
+      //     if (motorPower.m2 < idleThrust) {
+      //       motorPower.m2 = idleThrust;
+      //     }
+      //     if (motorPower.m3 < idleThrust) {
+      //       motorPower.m3 = idleThrust;
+      //     }
+      //     if (motorPower.m4 < idleThrust) {
+      //       motorPower.m4 = idleThrust;
+      //     }
+
+      //   motorsSetRatio(MOTOR_M1, motorPower.m1);
+      //   motorsSetRatio(MOTOR_M2, motorPower.m2);
+      //   motorsSetRatio(MOTOR_M3, motorPower.m3);
+      //   motorsSetRatio(MOTOR_M4, motorPower.m4);
+      // }
 
 #ifdef CONFIG_DECK_USD
       // Log data to uSD card if configured
