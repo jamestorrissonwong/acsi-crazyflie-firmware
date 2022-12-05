@@ -738,88 +738,88 @@ LOG_GROUP_STOP(controller)
 //  *
 //  * Note: all values may not be updated depending on which estimator that is used.
 //  */
-// LOG_GROUP_START(stateEstimate)
+LOG_GROUP_START(stateEstimate)
 
-// /**
-//  * @brief The estimated position of the platform in the global reference frame, X [m]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, x, &state.position.x)
+/**
+ * @brief The estimated position of the platform in the global reference frame, X [m]
+ */
+LOG_ADD_CORE(LOG_FLOAT, x, &state.position.x)
 
-// /**
-//  * @brief The estimated position of the platform in the global reference frame, Y [m]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, y, &state.position.y)
+/**
+ * @brief The estimated position of the platform in the global reference frame, Y [m]
+ */
+LOG_ADD_CORE(LOG_FLOAT, y, &state.position.y)
 
-// /**
-//  * @brief The estimated position of the platform in the global reference frame, Z [m]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, z, &state.position.z)
+/**
+ * @brief The estimated position of the platform in the global reference frame, Z [m]
+ */
+LOG_ADD_CORE(LOG_FLOAT, z, &state.position.z)
 
-// /**
-//  * @brief The velocity of the Crazyflie in the global reference frame, X [m/s]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, vx, &state.velocity.x)
+/**
+ * @brief The velocity of the Crazyflie in the global reference frame, X [m/s]
+ */
+LOG_ADD_CORE(LOG_FLOAT, vx, &state.velocity.x)
 
-// /**
-//  * @brief The velocity of the Crazyflie in the global reference frame, Y [m/s]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, vy, &state.velocity.y)
+/**
+ * @brief The velocity of the Crazyflie in the global reference frame, Y [m/s]
+ */
+LOG_ADD_CORE(LOG_FLOAT, vy, &state.velocity.y)
 
-// /**
-//  * @brief The velocity of the Crazyflie in the global reference frame, Z [m/s]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, vz, &state.velocity.z)
+/**
+ * @brief The velocity of the Crazyflie in the global reference frame, Z [m/s]
+ */
+LOG_ADD_CORE(LOG_FLOAT, vz, &state.velocity.z)
 
-// /**
-//  * @brief The acceleration of the Crazyflie in the global reference frame, X [Gs]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, ax, &state.acc.x)
+/**
+ * @brief The acceleration of the Crazyflie in the global reference frame, X [Gs]
+ */
+LOG_ADD_CORE(LOG_FLOAT, ax, &state.acc.x)
 
-// /**
-//  * @brief The acceleration of the Crazyflie in the global reference frame, Y [Gs]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, ay, &state.acc.y)
+/**
+ * @brief The acceleration of the Crazyflie in the global reference frame, Y [Gs]
+ */
+LOG_ADD_CORE(LOG_FLOAT, ay, &state.acc.y)
 
-// /**
-//  * @brief The acceleration of the Crazyflie in the global reference frame, without considering gravity, Z [Gs]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, az, &state.acc.z)
+/**
+ * @brief The acceleration of the Crazyflie in the global reference frame, without considering gravity, Z [Gs]
+ */
+LOG_ADD_CORE(LOG_FLOAT, az, &state.acc.z)
 
-// /**
-//  * @brief Attitude, roll angle [deg]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, roll, &state.attitude.roll)
+/**
+ * @brief Attitude, roll angle [deg]
+ */
+LOG_ADD_CORE(LOG_FLOAT, roll, &state.attitude.roll)
 
-// /**
-//  * @brief Attitude, pitch angle (legacy CF2 body coordinate system, where pitch is inverted) [deg]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, pitch, &state.attitude.pitch)
+/**
+ * @brief Attitude, pitch angle (legacy CF2 body coordinate system, where pitch is inverted) [deg]
+ */
+LOG_ADD_CORE(LOG_FLOAT, pitch, &state.attitude.pitch)
 
-// /**
-//  * @brief Attitude, yaw angle [deg]
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, yaw, &state.attitude.yaw)
+/**
+ * @brief Attitude, yaw angle [deg]
+ */
+LOG_ADD_CORE(LOG_FLOAT, yaw, &state.attitude.yaw)
 
-// /**
-//  * @brief Attitude as a quaternion, x
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, qx, &state.attitudeQuaternion.x)
+/**
+ * @brief Attitude as a quaternion, x
+ */
+LOG_ADD_CORE(LOG_FLOAT, qx, &state.attitudeQuaternion.x)
 
-// /**
-//  * @brief Attitude as a quaternion, y
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, qy, &state.attitudeQuaternion.y)
+/**
+ * @brief Attitude as a quaternion, y
+ */
+LOG_ADD_CORE(LOG_FLOAT, qy, &state.attitudeQuaternion.y)
 
-// /**
-//  * @brief Attitude as a quaternion, z
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, qz, &state.attitudeQuaternion.z)
+/**
+ * @brief Attitude as a quaternion, z
+ */
+LOG_ADD_CORE(LOG_FLOAT, qz, &state.attitudeQuaternion.z)
 
-// /**
-//  * @brief Attitude as a quaternion, w
-//  */
-// LOG_ADD_CORE(LOG_FLOAT, qw, &state.attitudeQuaternion.w)
-// LOG_GROUP_STOP(stateEstimate)
+/**
+ * @brief Attitude as a quaternion, w
+ */
+LOG_ADD_CORE(LOG_FLOAT, qw, &state.attitudeQuaternion.w)
+LOG_GROUP_STOP(stateEstimate)
 
 /**
  * Log group for the state estimator, compressed format. This flavour of the
