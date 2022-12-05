@@ -437,6 +437,24 @@ PARAM_ADD_CORE(PARAM_UINT8, controller, &controllerType)
 PARAM_ADD_CORE(PARAM_UINT8, stop, &emergencyStop)
 PARAM_GROUP_STOP(stabilizer)
 
+LOG_GROUP_START(controller)
+/**
+ * @brief Thrust command
+ */
+LOG_ADD(LOG_FLOAT, cmd_thrust, &control.thrust)
+/**
+ * @brief Roll command
+ */
+LOG_ADD(LOG_FLOAT, cmd_roll, &control.roll)
+/**
+ * @brief Pitch command
+ */
+LOG_ADD(LOG_FLOAT, cmd_pitch, &control.pitch)
+/**
+ * @brief yaw command
+ */
+LOG_ADD(LOG_FLOAT, cmd_yaw, &control.yaw)
+LOG_GROUP_STOP(controller)
 
 /**
  * Log group for the current controller target
