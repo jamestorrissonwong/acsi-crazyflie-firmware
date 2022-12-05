@@ -208,7 +208,7 @@ void stabilizerInit(StateEstimatorType estimator)
     return;
 
   // SET PID GAINS
-  float KP[NUM_PID] = {20.0, 20.0, 20.0, 20.0};
+  float KP[NUM_PID] = {2000.0, 2000.0, 2000.0, 2000.0};
   float KI[NUM_PID] = {0.0, 0.0, 0.0, 0.0};
   float KD[NUM_PID] = {1.0, 1.0, 1.0, 1.0};
 
@@ -437,24 +437,24 @@ PARAM_ADD_CORE(PARAM_UINT8, controller, &controllerType)
 PARAM_ADD_CORE(PARAM_UINT8, stop, &emergencyStop)
 PARAM_GROUP_STOP(stabilizer)
 
-LOG_GROUP_START(controller)
-/**
- * @brief Thrust command
- */
-LOG_ADD(LOG_FLOAT, cmd_thrust, &control.thrust)
-/**
- * @brief Roll command
- */
-LOG_ADD(LOG_FLOAT, cmd_roll, &control.roll)
-/**
- * @brief Pitch command
- */
-LOG_ADD(LOG_FLOAT, cmd_pitch, &control.pitch)
-/**
- * @brief yaw command
- */
-LOG_ADD(LOG_FLOAT, cmd_yaw, &control.yaw)
-LOG_GROUP_STOP(controller)
+// LOG_GROUP_START(controller)
+// /**
+//  * @brief Thrust command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_thrust, &control.thrust)
+// /**
+//  * @brief Roll command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_roll, &control.roll)
+// /**
+//  * @brief Pitch command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_pitch, &control.pitch)
+// /**
+//  * @brief yaw command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_yaw, &control.yaw)
+// LOG_GROUP_STOP(controller)
 
 /**
  * Log group for the current controller target
@@ -604,10 +604,9 @@ LOG_ADD(LOG_FLOAT, yaw, &state.attitude.yaw)
  * @brief Current thrust
  */
 LOG_ADD(LOG_FLOAT, controlthrust, &control.thrust)
-
-LOG_ADD_CORE(LOG_FLOAT, controlroll, &control.roll)
-LOG_ADD_CORE(LOG_FLOAT, controlpitch, &control.pitch)
-LOG_ADD_CORE(LOG_FLOAT, controlyaw, &control.yaw)
+LOG_ADD(LOG_FLOAT, controlroll, &control.roll)
+LOG_ADD(LOG_FLOAT, controlpitch, &control.pitch)
+LOG_ADD(LOG_FLOAT, controlyaw, &control.yaw)
 /**
  * @brief Rate of stabilizer loop
  */
@@ -618,7 +617,6 @@ STATS_CNT_RATE_LOG_ADD(rtStab, &stabilizerRate)
  */
 LOG_ADD(LOG_UINT32, intToOut, &inToOutLatency)
 
-LOG_ADD_CORE(LOG_FLOAT, pidthrust, &control.thrust)
 LOG_ADD_CORE(LOG_FLOAT, massestimate, &massPred)
 
 LOG_GROUP_STOP(stabilizer)
@@ -747,9 +745,9 @@ LOG_ADD_CORE(LOG_FLOAT, y, &sensorData.mag.y)
 LOG_ADD_CORE(LOG_FLOAT, z, &sensorData.mag.z)
 LOG_GROUP_STOP(mag)
 
-LOG_GROUP_START(controller)
-LOG_ADD(LOG_INT16, ctr_yaw, &control.yaw)
-LOG_GROUP_STOP(controller)
+// LOG_GROUP_START(controller)
+// LOG_ADD(LOG_INT16, ctr_yaw, &control.yaw)
+// LOG_GROUP_STOP(controller)
 
 /**
 //  * Log group for the state estimator, the currently estimated state of the platform.
