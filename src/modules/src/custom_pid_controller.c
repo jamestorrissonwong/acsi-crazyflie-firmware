@@ -98,6 +98,8 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
     float Izz = 0.00000362347;
     float m = 0.027;
 
+    control->thrust = -1;
+
     if (RATE_DO_EXECUTE(ATTITUDE_RATE, tick)) {
         float phi = all_state->attitude.roll;
         float theta = all_state->attitude.pitch;
