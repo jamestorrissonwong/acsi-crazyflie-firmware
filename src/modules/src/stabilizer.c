@@ -208,7 +208,7 @@ void stabilizerInit(StateEstimatorType estimator)
     return;
 
   // SET PID GAINS
-  float KP[NUM_PID] = {1.0, 1.0, 1.0, 1.0};
+  float KP[NUM_PID] = {20.0, 20.0, 20.0, 20.0};
   float KI[NUM_PID] = {0.0, 0.0, 0.0, 0.0};
   float KD[NUM_PID] = {1.0, 1.0, 1.0, 1.0};
 
