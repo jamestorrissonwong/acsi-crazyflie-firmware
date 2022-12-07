@@ -20,7 +20,7 @@
 //     float roll;
 //     float yaw;
 // } control_output_t
-#define MIN_THRUST 20000.0
+#define MIN_THRUST 20000.0f
 
 static bool isInit;
 static pid_gains_t *gains_arr[NUM_PID];
@@ -118,7 +118,7 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             temp_control[i] = (temp_control[i]+additive_arr[i])*multiplicative_arr[i];
         }
 
-        control->thrust = temp_control[0]*1000.0;
+        control->thrust = temp_control[0]*(float)1000.0;
         if (control->thrust < MIN_THRUST){
             control->thrust = MIN_THRUST;
         }
