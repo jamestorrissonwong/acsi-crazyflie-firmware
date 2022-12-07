@@ -208,8 +208,8 @@ void stabilizerInit(StateEstimatorType estimator)
     return;
 
   // SET PID GAINS
-  float KP[NUM_PID] = {2000.0, 2000.0, 2000.0, 2000.0};
-  float KI[NUM_PID] = {0.0, 0.0, 0.0, 0.0};
+  float KP[NUM_PID] = {2.0, 20.0, 20.0, 20.0};
+  float KI[NUM_PID] = {0.5, 0.50, 0.50, 0.50};
   float KD[NUM_PID] = {1.0, 1.0, 1.0, 1.0};
 
   copterGainsInit(KP, KI, KD);
