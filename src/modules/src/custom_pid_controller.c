@@ -26,10 +26,10 @@
 static bool isInit;
 static pid_gains_t *gains_arr[NUM_PID];
 
-static float cmd_thrust;
-static float cmd_roll;
-static float cmd_pitch;
-static float cmd_yaw;
+static float c_thrust;
+static float c_roll;
+static float c_pitch;
+static float c_yaw;
 
 
 static inline int16_t saturateSignedInt16(float in)
@@ -134,10 +134,10 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             control->roll = 0;
             control->yaw = 0;
 
-            cmd_thrust = control->thrust;
-            cmd_pitch = control->pitch;
-            cmd_roll = control->roll;
-            cmd_yaw = control->yaw;
+            c_thrust = control->thrust;
+            c_pitch = control->pitch;
+            c_roll = control->roll;
+            c_yaw = control->yaw;
         }
         else {
             control->thrust = constrain(temp_control[0]*10000.0f, 0, UINT16_MAX);
@@ -156,10 +156,10 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             control->roll = saturateSignedInt16(roll);
             control->yaw = saturateSignedInt16(yaw);
 
-            cmd_thrust = control->thrust;
-            cmd_pitch = control->pitch;
-            cmd_roll = control->roll;
-            cmd_yaw = control->yaw;
+            c_thrust = control->thrust;
+            c_pitch = control->pitch;
+            c_roll = control->roll;
+            c_yaw = control->yaw;
         }
         
     }
@@ -173,17 +173,17 @@ LOG_GROUP_START(controller)
 /**
  * @brief Thrust command
  */
-LOG_ADD(LOG_FLOAT, cmd_thrust, &cmd_thrust)
+LOG_ADD(LOG_FLOAT, cmd_thrust, &c_thrust)
 /**
  * @brief Roll command
  */
-LOG_ADD(LOG_FLOAT, cmd_roll, &cmd_roll)
+LOG_ADD(LOG_FLOAT, cmd_roll, &c_roll)
 /**
  * @brief Pitch command
  */
-LOG_ADD(LOG_FLOAT, cmd_pitch, &cmd_pitch)
+LOG_ADD(LOG_FLOAT, cmd_pitch, &c_pitch)
 /**
  * @brief yaw command
  */
-LOG_ADD(LOG_FLOAT, cmd_yaw, &cmd_yaw)
+LOG_ADD(LOG_FLOAT, cmd_yaw, &c_yaw)
 LOG_GROUP_STOP(controller)
