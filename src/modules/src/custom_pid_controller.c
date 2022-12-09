@@ -138,13 +138,13 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             cmd_yaw = control->yaw;
         }
         else {
-            control->thrust = constrain(temp_control[0]*100000.0f, 0, UINT16_MAX);
+            control->thrust = constrain(temp_control[0]*10000.0f, 0, UINT16_MAX);
             // if (control->thrust < MIN_THRUST){
             //     control->thrust = MIN_THRUST;
             // }
-            control->pitch = saturateSignedInt16(temp_control[1]);
-            control->roll = saturateSignedInt16(temp_control[2]);
-            control->yaw = saturateSignedInt16(temp_control[3]);
+            control->pitch = saturateSignedInt16(temp_control[1]*10000.0f);
+            control->roll = saturateSignedInt16(temp_control[2]*10000.0f);
+            control->yaw = saturateSignedInt16(temp_control[3]*10000.0f);
 
             cmd_thrust = control->thrust;
             cmd_pitch = control->pitch;
