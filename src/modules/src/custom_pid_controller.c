@@ -127,7 +127,7 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             control->yaw = 0;
         }
         else {
-            control->thrust = temp_control[0]*1000.0f;
+            control->thrust = temp_control[0]*100000.0f;
             // if (control->thrust < MIN_THRUST){
             //     control->thrust = MIN_THRUST;
             // }
