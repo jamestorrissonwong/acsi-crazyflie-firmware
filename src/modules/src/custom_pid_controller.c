@@ -98,12 +98,12 @@ bool customControllerTest(void){
 
 void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensorData_t *sensors, const state_t *all_state, const uint32_t tick) {
     // MOVE THESE CONSTANTS
-    float g = 9.81;
+    float g = 9.81f;
     float additive_arr[NUM_PID] = {g, 0.0, 0.0, 0.0};
-    float Ixx = 0.000023951f*1000.0f;
+    float Ixx = 0.000023951f*100000.0f;
     float Iyy = Ixx;
-    float Izz = 0.00000362347f*1000.0f;
-    float m = 0.027;
+    float Izz = 0.00000362347f*100000.0f;
+    float m = 0.027f*10.0f;
 
     // control->thrust = -1;
 
