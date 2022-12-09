@@ -4,7 +4,7 @@
 #include "stabilizer_types.h"
 #include "custom_pid_controller.h"
 #include <math.h>
-
+#include "log.h"
 // PID should have 3 gains for each control output
 // typedef struct { 
 //     float acc_err;
@@ -24,6 +24,11 @@
 
 static bool isInit;
 static pid_gains_t *gains_arr[NUM_PID];
+
+static float cmd_thrust;
+static float cmd_roll;
+static float cmd_pitch;
+static float cmd_yaw;
 
 
 static inline int16_t saturateSignedInt16(float in)
@@ -125,6 +130,11 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             control->pitch = 0;
             control->roll = 0;
             control->yaw = 0;
+
+            cmd_thrust = control->thrust;
+            cmd_pitch = control->pitch;
+            cmd_roll = control->roll;
+            cmd_yaw = control->yaw;
         }
         else {
             control->thrust = temp_control[0]*100000.0f;
@@ -134,7 +144,35 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             control->pitch = saturateSignedInt16(temp_control[1]);
             control->roll = saturateSignedInt16(temp_control[2]);
             control->yaw = saturateSignedInt16(temp_control[3]);
+
+            cmd_thrust = control->thrust;
+            cmd_pitch = control->pitch;
+            cmd_roll = control->roll;
+            cmd_yaw = control->yaw;
         }
         
     }
 }
+
+/**
+ * Logging variables for the command and reference signals for the
+ *  PID controller
+ */
+LOG_GROUP_START(controller)
+/**
+ * @brief Thrust command
+ */
+LOG_ADD(LOG_FLOAT, cmd_thrust, &cmd_thrust)
+/**
+ * @brief Roll command
+ */
+LOG_ADD(LOG_FLOAT, cmd_roll, &cmd_roll)
+/**
+ * @brief Pitch command
+ */
+LOG_ADD(LOG_FLOAT, cmd_pitch, &cmd_pitch)
+/**
+ * @brief yaw command
+ */
+LOG_ADD(LOG_FLOAT, cmd_yaw, &cmd_yaw)
+LOG_GROUP_STOP(controller)
