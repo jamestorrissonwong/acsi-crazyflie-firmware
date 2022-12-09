@@ -119,6 +119,7 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
         }
 
         // if (all_setpoint->thrust != 0){
+        // if (all_setpoint->velocity.z == 0) {
         if (all_setpoint->mode.z == modeDisable) {
             control->thrust = 0;
             control->pitch = 0;
@@ -126,10 +127,10 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             control->yaw = 0;
         }
         else {
-            control->thrust = temp_control[0]*(float)1000.0;
-            if (control->thrust < MIN_THRUST){
-                control->thrust = MIN_THRUST;
-            }
+            control->thrust = temp_control[0]*1000.0f;
+            // if (control->thrust < MIN_THRUST){
+            //     control->thrust = MIN_THRUST;
+            // }
             control->pitch = saturateSignedInt16(temp_control[1]);
             control->roll = saturateSignedInt16(temp_control[2]);
             control->yaw = saturateSignedInt16(temp_control[3]);
