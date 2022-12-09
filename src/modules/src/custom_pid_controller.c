@@ -100,9 +100,9 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
     // MOVE THESE CONSTANTS
     float g = 9.81;
     float additive_arr[NUM_PID] = {g, 0.0, 0.0, 0.0};
-    float Ixx = 0.000023951;
+    float Ixx = 0.000023951*1000.0f;
     float Iyy = Ixx;
-    float Izz = 0.00000362347;
+    float Izz = 0.00000362347*1000.0f;
     float m = 0.027;
 
     // control->thrust = -1;
