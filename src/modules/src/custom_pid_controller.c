@@ -3,6 +3,7 @@
 */
 #include "stabilizer_types.h"
 #include "custom_pid_controller.h"
+#include "num.h"
 #include <math.h>
 
 // PID should have 3 gains for each control output
@@ -127,7 +128,7 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
             control->yaw = 0;
         }
         else {
-            control->thrust = temp_control[0]*100000.0f;
+            control->thrust = constrain(temp_control[0]*100000.0f, 0, UINT16_MAX);
             // if (control->thrust < MIN_THRUST){
             //     control->thrust = MIN_THRUST;
             // }
