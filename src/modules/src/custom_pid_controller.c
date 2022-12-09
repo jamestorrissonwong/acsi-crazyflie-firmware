@@ -113,9 +113,11 @@ void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensor
 
         float multiplicative_arr[NUM_PID] = {m/(cosf(phi)*cosf(theta)), Ixx, Iyy, Izz};//{m/cos(phi)/cos(theta), Ixx, Iyy, Izz};
         float temp_control[NUM_PID];
-        float state[NUM_PID] = {all_state->position.z, all_state->attitude.pitch, all_state->attitude.roll, all_state->attitude.yaw};
+        // float state[NUM_PID] = {all_state->position.z, all_state->attitude.pitch, all_state->attitude.roll, all_state->attitude.yaw};
+        float state[NUM_PID] = {all_state->position.z, sensors->gyro.x, sensors->gyro.y, sensors->gyro.z};
 
-        float pos_setpoint[NUM_PID] = {all_setpoint->position.z, all_setpoint->attitude.pitch, all_setpoint->attitude.roll, all_setpoint->attitude.yaw};
+        // float pos_setpoint[NUM_PID] = {all_setpoint->position.z, all_setpoint->attitude.pitch, all_setpoint->attitude.roll, all_setpoint->attitude.yaw};
+        float pos_setpoint[NUM_PID] = {all_setpoint->position.z, all_setpoint->attitudeRate.roll, all_setpoint->attitudeRate.pitch, all_setpoint->attitudeRate.yaw};
         // float vel_setpoint[4] = {all_setpoint->velocity.z, all_setpoint->attitudeRate.pitch, all_setpoint->attitudeRate.roll, all_setpoint->attitudeRate.yaw};
 
         for (int i = 0; i < NUM_PID; i++){
