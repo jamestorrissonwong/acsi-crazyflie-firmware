@@ -72,7 +72,7 @@ static uint32_t inToOutLatency;
 // State variables for the stabilizer
 static setpoint_t setpoint;
 static sensorData_t sensorData;
-static int16_t massPred;
+float massPred;
 static massEst_t massEst;
 // static pid_gains_t gains;
 static state_t state;
@@ -324,7 +324,7 @@ static void stabilizerTask(void* param)
 
       stateEstimator(&state, tick);
       compressState();
-      massPred = saturateSignedInt16(rls_estimate(&control, &state, &massEst));
+      massPred = rls_estimate(&control, &state, &massEst);
  
     // TODO
     // Get setpoint from trajectory planner -- return as setpointCompressed
@@ -626,7 +626,8 @@ LOG_ADD(LOG_FLOAT, yaw, &state.attitude.yaw)
 LOG_ADD(LOG_FLOAT, controlthrust, &control.thrust)
 LOG_ADD(LOG_FLOAT, controlroll, &control.roll)
 LOG_ADD(LOG_FLOAT, controlpitch, &control.pitch)
-LOG_ADD(LOG_FLOAT, controlyaw, &control.yaw)
+// LOG_ADD(LOG_FLOAT, controlyaw, &control.yaw)
+LOG_ADD(LOG_FLOAT, controlyaw, &massPred)
 /**
  * @brief Rate of stabilizer loop
  */
