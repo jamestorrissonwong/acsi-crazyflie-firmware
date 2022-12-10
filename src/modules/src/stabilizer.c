@@ -208,7 +208,7 @@ void stabilizerInit(StateEstimatorType estimator)
     return;
 
   // SET PID GAINS
-  float T_KP = 4000.0;
+  float T_KP = 40.0;
   float T_KI = 0.0;
   float T_KD = 1.0;
 
