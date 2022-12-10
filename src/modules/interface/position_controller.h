@@ -28,6 +28,10 @@
 
 #include "stabilizer_types.h"
 
+// static float mass;
+
+void updateMass(float m);
+
 // A position controller calculate the thrust, roll, pitch to approach
 // a 3D position setpoint
 void positionControllerInit();

@@ -163,6 +163,12 @@ static struct this_s this = {
 };
 #endif
 
+static float mass; 
+
+void updateMass(float newm){
+  mass = newm;
+}
+
 void positionControllerInit()
 {
   pidInit(&this.pidX.pid, this.pidX.setpoint, this.pidX.pid.kp, this.pidX.pid.ki, this.pidX.pid.kd,
@@ -251,12 +257,17 @@ void velocityController(float* thrust, attitude_t *attitude, setpoint_t *setpoin
   attitude->pitch = constrain(attitude->pitch, -pLimit, pLimit);
 
   // Thrust
-  // float thrustRaw = runPid(state->velocity.z, &this.pidVZ, setpoint->velocity.z, DT);
-  float thrustRaw = runPid(state->velocity.z, &this.pidVZ, setpoint->velocity.z, DT);
   float m = 0.032;
-  thrustRaw = thrustRaw*(m/(cosf(state->attitude.roll)*cosf(state->attitude.pitch)));
+  this.pidVZ.pid.kp = 25.0f * (mass/m);
+  this.pidVZ.pid.ki = 15.0f * (mass/m);
+
+  float thrustRaw = runPid(state->velocity.z, &this.pidVZ, setpoint->velocity.z, DT);
+  // float thrustRaw = runPid(state->position.z, &this.pidZ, setpoint->position.z, DT);
+  // float m = 0.032;
+  // thrustRaw = thrustRaw*(m/(cosf(state->attitude.roll)*cosf(state->attitude.pitch)));
+  // thrustRaw = thrustRaw*(mass/m);
   // Scale the thrust and add feed forward term
-  // *thrust = thrustRaw*thrustScale + this.thrustBase;
+  *thrust = thrustRaw*thrustScale + this.thrustBase;
   // Check for minimum thrust
   if (*thrust < this.thrustMin) {
     *thrust = this.thrustMin;

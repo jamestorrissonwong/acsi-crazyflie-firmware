@@ -60,6 +60,7 @@
 
 // #include "custom_pid_controller.h"
 #include "rls_mass_estimator.h"
+#include "position_controller.h"
 
 #define CONTROLLER_RATE RATE_100_HZ
 
@@ -325,6 +326,8 @@ static void stabilizerTask(void* param)
       stateEstimator(&state, tick);
       compressState();
       massPred = rls_estimate(&control, &state, &massEst);
+
+      updateMass(massPred);
  
     // TODO
     // Get setpoint from trajectory planner -- return as setpointCompressed
