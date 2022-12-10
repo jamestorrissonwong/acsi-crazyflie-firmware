@@ -639,6 +639,9 @@ STATS_CNT_RATE_LOG_ADD(rtStab, &stabilizerRate)
 LOG_ADD(LOG_UINT32, intToOut, &inToOutLatency)
 
 LOG_ADD_CORE(LOG_FLOAT, massestimate, &massPred)
+LOG_ADD_CORE(LOG_FLOAT, massPhi, &(massEst.phi))
+LOG_ADD_CORE(LOG_FLOAT, massy, &(massEst.y))
+LOG_ADD_CORE(LOG_FLOAT, massL, &(massEst.L))
 
 LOG_GROUP_STOP(stabilizer)
 
