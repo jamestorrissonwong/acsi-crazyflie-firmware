@@ -251,9 +251,12 @@ void velocityController(float* thrust, attitude_t *attitude, setpoint_t *setpoin
   attitude->pitch = constrain(attitude->pitch, -pLimit, pLimit);
 
   // Thrust
+  // float thrustRaw = runPid(state->velocity.z, &this.pidVZ, setpoint->velocity.z, DT);
   float thrustRaw = runPid(state->velocity.z, &this.pidVZ, setpoint->velocity.z, DT);
+  float m = 0.032;
+  thrustRaw = thrustRaw*(m/(cosf(state->attitude.roll)*cosf(state->attitude.pitch)));
   // Scale the thrust and add feed forward term
-  *thrust = thrustRaw*thrustScale + this.thrustBase;
+  // *thrust = thrustRaw*thrustScale + this.thrustBase;
   // Check for minimum thrust
   if (*thrust < this.thrustMin) {
     *thrust = this.thrustMin;
