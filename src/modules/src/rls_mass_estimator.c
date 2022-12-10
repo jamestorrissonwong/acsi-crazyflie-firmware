@@ -140,7 +140,7 @@ float rls_estimate(control_t *control, state_t *state, massEst_t *me){
 
     me->theta = me->theta + (me->L)*(me->y - ((me->phi)*(me->theta)));
 
-    float zest = 1.0f/(me->theta);
+    float zest = (1.0f/(me->theta))-0.0092f;
 
     /* NaN is the only floating point value that does NOT equal itself.
     * Therefore if n != n, then it is NaN. */
