@@ -42,7 +42,7 @@ void rls_init(massEst_t *me){
 }
 
 void update_phi(control_t *control, state_t *state, massEst_t *me){
-    float T = control->thrust;
+    float T = control->thrust*1000000.0f;
     // float xvel = state->velocity.x;
     // float yvel = state->velocity.y;
     float zvel = state->velocity.z;
