@@ -165,22 +165,22 @@ void controllerPid(control_t *control, setpoint_t *setpoint,
  * altitude PID controller
  */
 LOG_GROUP_START(controller)
-/**
- * @brief Thrust command
- */
-LOG_ADD(LOG_FLOAT, cmd_thrust, &cmd_thrust)
-/**
- * @brief Roll command
- */
-LOG_ADD(LOG_FLOAT, cmd_roll, &cmd_roll)
-/**
- * @brief Pitch command
- */
-LOG_ADD(LOG_FLOAT, cmd_pitch, &cmd_pitch)
-/**
- * @brief yaw command
- */
-LOG_ADD(LOG_FLOAT, cmd_yaw, &cmd_yaw)
+// /**
+//  * @brief Thrust command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_thrust, &cmd_thrust)
+// /**
+//  * @brief Roll command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_roll, &cmd_roll)
+// /**
+//  * @brief Pitch command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_pitch, &cmd_pitch)
+// /**
+//  * @brief yaw command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_yaw, &cmd_yaw)
 /**
  * @brief Gyro roll measurement in radians
  */
