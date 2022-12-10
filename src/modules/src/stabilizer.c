@@ -624,10 +624,10 @@ LOG_ADD(LOG_FLOAT, yaw, &state.attitude.yaw)
  * @brief Current thrust
  */
 LOG_ADD(LOG_FLOAT, controlthrust, &control.thrust)
-LOG_ADD(LOG_FLOAT, controlroll, &control.roll)
-LOG_ADD(LOG_FLOAT, controlpitch, &control.pitch)
+// LOG_ADD(LOG_FLOAT, controlroll, &control.roll)
+// LOG_ADD(LOG_FLOAT, controlpitch, &control.pitch)
 // LOG_ADD(LOG_FLOAT, controlyaw, &control.yaw)
-LOG_ADD(LOG_FLOAT, controlyaw, &massPred)
+// LOG_ADD(LOG_FLOAT, controlyaw, &massPred)
 /**
  * @brief Rate of stabilizer loop
  */
