@@ -136,7 +136,7 @@ float rls_estimate(control_t *control, state_t *state, massEst_t *me){
     me->L = 1.0f/(me->lambda + (me->phi)*(me->P)*(me->phi));
     me->L = me->L*(me->P*me->phi);
 
-    me->P = (1-(me->L*me->phi))*me->P*me->lambda;
+    me->P = ((1-(me->L*me->phi))*me->P)/(me->lambda);
 
     me->theta = me->theta + (me->L)*(me->y - ((me->phi)*(me->theta)));
 
