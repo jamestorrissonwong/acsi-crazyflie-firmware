@@ -42,7 +42,7 @@ void rls_init(massEst_t *me){
 }
 
 void update_phi(control_t *control, state_t *state, massEst_t *me){
-    float T = control->thrust*1000000.0f;
+    float T = control->thrust/100000.0f;
     // float xvel = state->velocity.x;
     // float yvel = state->velocity.y;
     float zvel = state->velocity.z;
@@ -51,7 +51,7 @@ void update_phi(control_t *control, state_t *state, massEst_t *me){
     // float yacc = 9.81f*(state->acc.y);
     float zacc = 9.81f*(state->acc.z) + 9.81f;
 
-    float theta = PI*(state->attitude.pitch)/180; // is this in rad? 
+    float theta = PI*(state->attitude.pitch)/180.0f; // is this in rad? 
     // float phi = PI*(state->attitude.roll)/180; 
 
     // float phi1 = -T*arm_sin_f32(theta) - (((float)(9.18e-7))*xvel);
