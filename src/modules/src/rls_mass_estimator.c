@@ -66,7 +66,7 @@ void update_phi(control_t *control, state_t *state, massEst_t *me){
     // me->y[1][0] = yacc;
     // me->y[2][0] = zacc;
     me->phi = phi3; 
-    me-> y = zacc;
+    me->y = zacc;
 }
 
 float rls_estimate(control_t *control, state_t *state, massEst_t *me){
