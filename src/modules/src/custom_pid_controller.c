@@ -186,9 +186,9 @@ void customPID(control_t *control, setpoint_t *all_setpoint, const sensorData_t 
             yaw = (yaw)*(Izz);
 
             thrust *= 10000.0f;
-            pitch *= 1000.0f;
-            roll *= 1000.0f;
-            yaw *= 1000.0f;
+            pitch *= 10000.0f;
+            roll *= 10000.0f;
+            yaw *= 10000.0f;
 
             control->thrust = constrain(thrust, 0, UINT16_MAX);
             control->pitch = saturateSignedInt16(-pitch);
