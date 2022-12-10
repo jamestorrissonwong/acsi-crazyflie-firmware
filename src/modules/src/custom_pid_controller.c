@@ -208,21 +208,21 @@ void customPID(control_t *control, setpoint_t *all_setpoint, const sensorData_t 
  * Logging variables for the command and reference signals for the
  *  PID controller
  */
-LOG_GROUP_START(controller)
-/**
- * @brief Thrust command
- */
-LOG_ADD(LOG_FLOAT, cmd_thrust, &c_thrust)
-/**
- * @brief Roll command
- */
-LOG_ADD(LOG_FLOAT, cmd_roll, &c_roll)
-/**
- * @brief Pitch command
- */
-LOG_ADD(LOG_FLOAT, cmd_pitch, &c_pitch)
-/**
- * @brief yaw command
- */
-LOG_ADD(LOG_FLOAT, cmd_yaw, &c_yaw)
-LOG_GROUP_STOP(controller)
+// LOG_GROUP_START(controller)
+// /**
+//  * @brief Thrust command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_thrust, &c_thrust)
+// /**
+//  * @brief Roll command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_roll, &c_roll)
+// /**
+//  * @brief Pitch command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_pitch, &c_pitch)
+// /**
+//  * @brief yaw command
+//  */
+// LOG_ADD(LOG_FLOAT, cmd_yaw, &c_yaw)
+// LOG_GROUP_STOP(controller)
