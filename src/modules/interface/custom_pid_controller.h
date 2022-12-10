@@ -44,16 +44,19 @@ typedef struct {
 
 // void copterPIDWrapper(pid_gains_t **gains_arr, state_t *all_state, setpoint_t *all_setpoint, control_t *control);
 
-void gainsInit(pid_gains_t *gains, float kp, float ki, float kd);
+void gainsInit(float tp, float ti, float td, 
+               float rp, float ri, float rd, 
+               float pp, float pi, float pd, 
+               float yp, float yi, float yd);
 
 // Should extract 9 errors
 void computePID(pid_gains_t *gains, float state, float setpoint, float *control);
 
-void copterGainsInit(float *KP, float *KI, float *KD);
+// void copterGainsInit(float *KP, float *KI, float *KD);
 
 void customDummyInit(void);
 
 bool customControllerTest(void);
 
 
-void copterPIDWrapper(control_t *control, setpoint_t *all_setpoint, const sensorData_t *sensors, const state_t *all_state, const uint32_t tick);
+void customPID(control_t *control, setpoint_t *all_setpoint, const sensorData_t *sensors, const state_t *all_state, const uint32_t tick);
