@@ -213,12 +213,12 @@ void stabilizerInit(StateEstimatorType estimator)
   float T_KD = 1.0;
 
   float R_KP = 200.0;
-  float R_KI = 50.0;
-  float R_KD = 100.0;
+  float R_KI = 20.0;
+  float R_KD = 50.0;
 
   float P_KP = 200.0;
-  float P_KI = 50.0;
-  float P_KD = 100.0;
+  float P_KI = 20.0;
+  float P_KD = 50.0;
 
   float Y_KP = 100.0;
   float Y_KI = 75.0;
