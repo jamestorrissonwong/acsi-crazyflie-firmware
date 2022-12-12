@@ -264,7 +264,7 @@ void velocityController(float* thrust, attitude_t *attitude, setpoint_t *setpoin
   float m = 0.032;
   //float mass = 0.032;
   // mass = 0.0347;
-  mass = 0.037;
+  mass = 0.027;
   this.pidVZ.pid.kp = 25.0f * (mass/m);
   this.pidVZ.pid.ki = 15.0f * (mass/m);
 
