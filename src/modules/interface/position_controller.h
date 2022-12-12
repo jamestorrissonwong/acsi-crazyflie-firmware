@@ -30,7 +30,7 @@
 
 // static float mass;
 
-void updateMass(float m);
+void updateMass(float newm, bool clamp);
 
 // A position controller calculate the thrust, roll, pitch to approach
 // a 3D position setpoint

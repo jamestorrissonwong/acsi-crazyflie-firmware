@@ -10,6 +10,7 @@ typedef struct{
     float L;
     float phi;
     float y;
+    bool clamp;
     // __attribute__((aligned(4))) float y[3][1];
     // arm_matrix_instance_f32 ym;
 

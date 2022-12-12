@@ -165,8 +165,10 @@ static struct this_s this = {
 
 static float mass; 
 
-void updateMass(float newm){
-  mass = newm;
+void updateMass(float newm, bool clamp){
+  if (!clamp) {
+    mass = newm;
+  }
 }
 
 void positionControllerInit()
@@ -258,7 +260,7 @@ void velocityController(float* thrust, attitude_t *attitude, setpoint_t *setpoin
 
   // Thrust
   float m = 0.032;
-  mass = 0.0347;
+  // mass = 0.0347;
   this.pidVZ.pid.kp = 25.0f * (mass/m);
   this.pidVZ.pid.ki = 15.0f * (mass/m);
 

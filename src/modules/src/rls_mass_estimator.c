@@ -1,7 +1,5 @@
 #include "rls_mass_estimator.h"
 
-
-
 void rls_init(massEst_t *me){
     me->lambda = 0.8; 
     
@@ -37,6 +35,7 @@ void rls_init(massEst_t *me){
     me->P = 10.0f;
     me->L = 1; 
 
+    me->clamp = 0;
 
     return;
 }
@@ -135,6 +134,10 @@ float rls_estimate(control_t *control, state_t *state, massEst_t *me){
 
     me->L = 1.0f/(me->lambda + (me->phi)*(me->P)*(me->phi));
     me->L = me->L*(me->P*me->phi);
+
+    if (me->L < 0 || me->L > 1){
+        me->clamp = 1;
+    }
 
     me->P = ((1-(me->L*me->phi))*me->P)/(me->lambda);
 

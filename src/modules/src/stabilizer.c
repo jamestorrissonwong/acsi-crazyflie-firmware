@@ -26,6 +26,7 @@
 #define DEBUG_MODULE "STAB"
 
 #include <math.h>
+#include <stdbool.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -326,8 +327,9 @@ static void stabilizerTask(void* param)
       stateEstimator(&state, tick);
       compressState();
       massPred = rls_estimate(&control, &state, &massEst);
+      bool clamp = massEst.clamp;
 
-      updateMass(massPred);
+      updateMass(massPred, clamp);
  
     // TODO
     // Get setpoint from trajectory planner -- return as setpointCompressed
