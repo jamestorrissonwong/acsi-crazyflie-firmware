@@ -31,7 +31,7 @@ void rls_init(massEst_t *me){
     // me->P[1][1] = 0.015f;
     // me->P[2][2] = 0.015f;
 
-    me->theta = (1.0f)/(0.0322f);
+    me->theta = (1.0f)/(0.027f);
     me->P = 10.0f;
     me->L = 1; 
 
