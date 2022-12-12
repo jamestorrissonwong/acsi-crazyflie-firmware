@@ -186,6 +186,8 @@ void positionControllerInit()
       this.pidVY.pid.kff, this.pidVY.pid.dt, POSITION_RATE, velFiltCutoff, velFiltEnable);
   pidInit(&this.pidVZ.pid, this.pidVZ.setpoint, this.pidVZ.pid.kp, this.pidVZ.pid.ki, this.pidVZ.pid.kd,
       this.pidVZ.pid.kff, this.pidVZ.pid.dt, POSITION_RATE, velZFiltCutoff, velZFiltEnable);
+
+  mass = 0.0322f;
 }
 
 static float runPid(float input, struct pidAxis_s *axis, float setpoint, float dt) {

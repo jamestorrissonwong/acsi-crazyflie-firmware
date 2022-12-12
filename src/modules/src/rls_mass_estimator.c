@@ -138,6 +138,9 @@ float rls_estimate(control_t *control, state_t *state, massEst_t *me){
     if (me->L < 0 || me->L > 1){
         me->clamp = 1;
     }
+    else {
+        me->clamp = 0;
+    }
 
     me->P = ((1-(me->L*me->phi))*me->P)/(me->lambda);
 
