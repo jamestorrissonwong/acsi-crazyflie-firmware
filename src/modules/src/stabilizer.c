@@ -59,7 +59,6 @@
 #include "static_mem.h"
 #include "rateSupervisor.h"
 
-// #include "custom_pid_controller.h"
 #include "rls_mass_estimator.h"
 #include "position_controller.h"
 
@@ -76,10 +75,8 @@ static setpoint_t setpoint;
 static sensorData_t sensorData;
 float massPred;
 static massEst_t massEst;
-// static pid_gains_t gains;
 static state_t state;
 static control_t control;
-//static control_output_t control;
 static motors_thrust_t motorPower;
 // For scratch storage - never logged or passed to other subsystems.
 static setpoint_t tempSetpoint;
@@ -209,33 +206,10 @@ void stabilizerInit(StateEstimatorType estimator)
   if(isInit)
     return;
 
-  // SET PID GAINS
-  float T_KP = 40.0;
-  float T_KI = 0.0;
-  float T_KD = 1.0;
-
-  float R_KP = 2000.0;
-  float R_KI = 0.0;
-  float R_KD = 50.0;
-
-  float P_KP = 2000.0;
-  float P_KI = 0.0;
-  float P_KD = 50.0;
-
-  float Y_KP = 1000.0;
-  float Y_KI = 0.0;
-  float Y_KD = 10.0;
-
-  // float KP[NUM_PID] = {2.0, 200.0, 200.0, 100.0};
-  // float KI[NUM_PID] = {0.5, 500.0, 500.0, 50.0};
-  // float KD[NUM_PID] = {0.0, 2.0, 2.0, 0.50};
-
-  gainsInit(T_KP, T_KI, T_KD, R_KP, R_KI, R_KD, P_KP, P_KI, P_KD, Y_KP, Y_KI, Y_KD);
 
   sensorsInit();
   stateEstimatorInit(estimator);
-  controllerInit(ControllerTypeCustom);
-  // controllerInit(ControllerTypeAny);
+  controllerInit(ControllerTypeAny);
   powerDistributionInit();
   motorsInit(platformConfigGetMotorMapping());
   collisionAvoidanceInit();
@@ -327,16 +301,20 @@ static void stabilizerTask(void* param)
       stateEstimator(&state, tick);
       compressState();
       
+      // Determine which mass to feed into 
       bool clamp;
       int ct = getControllerType();
       switch (ct){ 
       case ControllerTypeFixedCor:
+        // Accurate Mass
         updateMass(0.037f, 0);
         break;
       case ControllerTypeFixedInc: 
+        // Incorrect Mass
         updateMass(0.027f, 0);
         break; 
       case ControllerTypeCustom:
+        // Estimated Mass
         massPred = rls_estimate(&control, &state, &massEst);
         clamp = massEst.clamp;
         updateMass(massPred, clamp);
@@ -361,16 +339,6 @@ static void stabilizerTask(void* param)
 
       collisionAvoidanceUpdateSetpoint(&setpoint, &sensorData, &state, tick);
 
-      // setpoint.position.z = 
-
-      // TODO
-      // Call our own controller
-      // 
-
-      // if (RATE_DO_EXECUTE(CONTROLLER_RATE, tick)) {
-      //   //computePID(&gains, &state, &setpoint, &control);
-      //   copterPIDWrapper(gains_arr, &state, &setpoint, &control);
-      // }
 
       controller(&control, &setpoint, &sensorData, &state, tick);
 
@@ -393,31 +361,6 @@ static void stabilizerTask(void* param)
         motorsSetRatio(MOTOR_M4, motorPower.m4);
       }
 
-      //     float r = control.pitch / 2.0f;
-      //     float p = control.pitch / 2.0f;
-      //     motorPower.m1 = limitUint16((double)(control.thrust - r + p + control.yaw));
-      //     motorPower.m2 = limitUint16((double)(control.thrust - r - p - control.yaw));
-      //     motorPower.m3 =  limitUint16((double)(control.thrust + r - p + control.yaw));
-      //     motorPower.m4 =  limitUint16((double)(control.thrust + r + p - control.yaw));
-      //     uint32_t idleThrust = 0;
-      //     if (motorPower.m1 < idleThrust) {
-      //       motorPower.m1 = idleThrust;
-      //     }
-      //     if (motorPower.m2 < idleThrust) {
-      //       motorPower.m2 = idleThrust;
-      //     }
-      //     if (motorPower.m3 < idleThrust) {
-      //       motorPower.m3 = idleThrust;
-      //     }
-      //     if (motorPower.m4 < idleThrust) {
-      //       motorPower.m4 = idleThrust;
-      //     }
-
-      //   motorsSetRatio(MOTOR_M1, motorPower.m1);
-      //   motorsSetRatio(MOTOR_M2, motorPower.m2);
-      //   motorsSetRatio(MOTOR_M3, motorPower.m3);
-      //   motorsSetRatio(MOTOR_M4, motorPower.m4);
-      // }
 
 #ifdef CONFIG_DECK_USD
       // Log data to uSD card if configured

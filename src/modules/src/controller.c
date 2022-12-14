@@ -27,7 +27,8 @@ static ControllerFcns controllerFunctions[] = {
   {.init = 0, .test = 0, .update = 0, .name = "None"}, // Any
   {.init = controllerPidInit, .test = controllerPidTest, .update = controllerPid, .name = "PID"},
   {.init = controllerMellingerInit, .test = controllerMellingerTest, .update = controllerMellinger, .name = "Mellinger"},
-  {.init = controllerINDIInit, .test = controllerINDITest, .update = controllerINDI, .name = "INDI"},
+  {.init = controllerINDIInit, .test = controllerINDITest, .update = controllerINDI, .name = "INDI"}, 
+  // Add additional controllers so we can switch mass configs from Python
   {.init = controllerPidInit, .test = controllerPidTest, .update = controllerPid, .name = "Custom"}, 
   {.init = controllerPidInit, .test = controllerPidTest, .update = controllerPid, .name = "FixedInc"}, 
   {.init = controllerPidInit, .test = controllerPidTest, .update = controllerPid, .name = "FixedCor"}

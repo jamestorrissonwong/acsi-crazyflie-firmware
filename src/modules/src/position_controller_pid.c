@@ -163,6 +163,7 @@ static struct this_s this = {
 };
 #endif
 
+// Allow us to change mass estimate from stabilizer.c
 static float mass; 
 
 void updateMass(float newm, bool clamp){
@@ -261,19 +262,14 @@ void velocityController(float* thrust, attitude_t *attitude, setpoint_t *setpoin
   attitude->pitch = constrain(attitude->pitch, -pLimit, pLimit);
 
   // Thrust
+  // Use baseline mass
   float m = 0.032;
-  //float mass = 0.032;
-  //mass = 0.037;
-  // mass = 0.0347;
-  // mass = 0.027;
+  // Scale gains
   this.pidVZ.pid.kp = 25.0f * (mass/m);
   this.pidVZ.pid.ki = 15.0f * (mass/m);
 
   float thrustRaw = runPid(state->velocity.z, &this.pidVZ, setpoint->velocity.z, DT);
-  // float thrustRaw = runPid(state->position.z, &this.pidZ, setpoint->position.z, DT);
-  // float m = 0.032;
-  // thrustRaw = thrustRaw*(m/(cosf(state->attitude.roll)*cosf(state->attitude.pitch)));
-  // thrustRaw = thrustRaw*(mass/m);
+
   // Scale the thrust and add feed forward term
   *thrust = thrustRaw*thrustScale + this.thrustBase;
   // Check for minimum thrust

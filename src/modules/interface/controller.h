@@ -28,6 +28,7 @@
 
 #include "stabilizer_types.h"
 
+// Enumerate Additional Controllers so we can switch between configurations from Python
 typedef enum {
   ControllerTypeAny,
   ControllerTypePID,
