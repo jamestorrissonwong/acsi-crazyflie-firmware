@@ -327,7 +327,7 @@ static void stabilizerTask(void* param)
       stateEstimator(&state, tick);
       compressState();
       
-
+      bool clamp;
       int ct = getControllerType();
       switch (ct){ 
       case ControllerTypeFixedCor:
@@ -338,12 +338,12 @@ static void stabilizerTask(void* param)
         break; 
       case ControllerTypeCustom:
         massPred = rls_estimate(&control, &state, &massEst);
-        bool clamp = massEst.clamp;
+        clamp = massEst.clamp;
         updateMass(massPred, clamp);
         break; 
       default:
         massPred = rls_estimate(&control, &state, &massEst);
-        bool clamp = massEst.clamp;
+        clamp = massEst.clamp;
         updateMass(massPred, clamp); 
         break;
       }
