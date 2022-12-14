@@ -326,10 +326,24 @@ static void stabilizerTask(void* param)
 
       stateEstimator(&state, tick);
       compressState();
-      massPred = rls_estimate(&control, &state, &massEst);
-      bool clamp = massEst.clamp;
+      
 
-      updateMass(massPred, clamp);
+      int ct = getControllerType();
+      switch (ct){ 
+      case ControllerTypeFixedCor:
+        updateMass(0.037f, 1);
+        break;
+      case ControllerTypeFixedInc: 
+        updateMass(0.027f, 1);
+        break; 
+      case ControllerTypeCustom:
+        massPred = rls_estimate(&control, &state, &massEst);
+        bool clamp = massEst.clamp;
+        updateMass(massPred, clamp);
+        break; 
+      default: 
+        break;
+      }
  
     // TODO
     // Get setpoint from trajectory planner -- return as setpointCompressed
