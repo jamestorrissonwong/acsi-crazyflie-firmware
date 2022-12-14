@@ -331,17 +331,20 @@ static void stabilizerTask(void* param)
       int ct = getControllerType();
       switch (ct){ 
       case ControllerTypeFixedCor:
-        updateMass(0.037f, 1);
+        updateMass(0.037f, 0);
         break;
       case ControllerTypeFixedInc: 
-        updateMass(0.027f, 1);
+        updateMass(0.027f, 0);
         break; 
       case ControllerTypeCustom:
         massPred = rls_estimate(&control, &state, &massEst);
         bool clamp = massEst.clamp;
         updateMass(massPred, clamp);
         break; 
-      default: 
+      default:
+        massPred = rls_estimate(&control, &state, &massEst);
+        bool clamp = massEst.clamp;
+        updateMass(massPred, clamp); 
         break;
       }
  
